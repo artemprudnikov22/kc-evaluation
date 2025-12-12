@@ -38,8 +38,22 @@ font-size: 16px;
 font-weight: 600;
 cursor: pointer;
 border: none;
-margin-bottom: 20px;
+margin-bottom: 5px; /* Уменьшаем отступ для заметки */
 width: 100%;
+}
+
+/* НОВЫЙ СТИЛЬ ДЛЯ ЗАМЕТКИ */
+.security-note {
+font-size: 13px;
+color: #666;
+margin-top: 0;
+margin-bottom: 20px;
+text-align: center;
+}
+
+.security-note span {
+    color: #ff4444; /* Красный для акцента */
+    font-weight: 600;
 }
 
 .employee-card {
@@ -103,17 +117,7 @@ user-select: none;
 background: #d59d3c;
 }
 
-.delete-btn {
-background: #ff4444;
-color: white;
-padding: 6px 12px;
-border-radius: 10px;
-font-size: 14px;
-font-weight: 600;
-cursor: pointer;
-border: none;
-margin-left: 8px;
-}
+/* Удален стиль .delete-btn */
 
 .details {
 margin-top: 12px;
@@ -256,7 +260,7 @@ margin: 0 auto 15px;
 </div>
 
 <button class="add-employee-btn" onclick="openAddEmployeeModal()">➕ Добавить сотрудника</button>
-
+<div class="security-note">* В целях сохранности данных, для удаления сотрудника обратитесь к <span>администратору</span>.</div>
 <div id="content"></div>
 
 <div class="loader-backdrop" id="loaderBackdrop"></div>
@@ -332,10 +336,10 @@ console.log('👥 Получено сотрудников:', rows);
 
 if (Array.isArray(rows) && rows.length > 0) {
 employees = rows.map(row => ({
-    id: parseInt(row.employee_id), // Теперь поля доступны напрямую
-    name: row.name,               // Теперь поля доступны напрямую
-    position: row.position,       // Теперь поля доступны напрямую
-    expanded: false
+    id: parseInt(row.employee_id), // Теперь поля доступны напрямую
+    name: row.name,               // Теперь поля доступны напрямую
+    position: row.position,       // Теперь поля доступны напрямую
+    expanded: false
 }));
 
 // Обновляем nextEmployeeId
@@ -581,18 +585,7 @@ await syncEmployeesToDB();
 }
 }
 
-async function deleteEmployee(employeeId) {
-if (!confirm("Вы уверены, что хотите удалить этого сотрудника?")) return;
-
-const index = employees.findIndex(e => e.id === employeeId);
-if (index !== -1) {
-employees.splice(index, 1);
-render();
-
-// Синхронизируем с БД
-await syncEmployeesToDB();
-}
-}
+// ❌ УДАЛЕНА ФУНКЦИЯ deleteEmployee
 
 function openAddEmployeeModal() {
 document.getElementById('addEmployeeModal').style.display = 'block';
@@ -653,7 +646,6 @@ card.innerHTML = `
 📤 Загрузить диалоги
 <input type="file" style="display:none" accept=".txt,.json,.csv,.xlsx,.xls,.xml,.docx,.doc,.pdf" onchange="handleUpload(event, ${emp.id})">
 </label>
-<button class="delete-btn" onclick="deleteEmployee(${emp.id})">🗑️</button>
 </div>
 </div>
 
