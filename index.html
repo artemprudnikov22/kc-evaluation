@@ -311,7 +311,7 @@ document.getElementById('loader').style.display = 'none';
 document.getElementById('loaderBackdrop').style.display = 'none';
 }
 
-// ✅ ЗАГРУЗКА СОТРУДНИКОВ ИЗ N8N
+// ✅ ЗАГРУЗКА СОТРУДНИКОВ ИЗ N8N (ИСПРАВЛЕНО: ожидается чистый JSON благодаря ноде Respond в n8n)
 async function loadEmployees() {
 try {
 console.log('🔄 Загружаем сотрудников из N8N...');
@@ -327,24 +327,24 @@ if (!response.ok) {
 throw new Error(`HTTP error! status: ${response.status}`);
 }
 
-// ⬇️ ИСПРАВЛЕННЫЙ БЛОК ДЛЯ ОБРАБОТКИ СТРУКТУРЫ N8N (item.json.field) ⬇️
-const rows = await response.json();
-console.log('👥 Получено сотрудников (сырая структура):', rows);
+const rows = await response.json(); // Чистый массив объектов
+console.log('👥 Получено сотрудников:', rows);
 
 if (Array.isArray(rows) && rows.length > 0) {
-employees = rows.map(item => ({
-    id: parseInt(item.json.employee_id),
-    name: item.json.name,
-    position: item.json.position,
+employees = rows.map(row => ({
+    id: parseInt(row.employee_id), // Теперь поля доступны напрямую
+    name: row.name,               // Теперь поля доступны напрямую
+    position: row.position,       // Теперь поля доступны напрямую
     expanded: false
 }));
+
+// Обновляем nextEmployeeId
 nextEmployeeId = Math.max(...employees.map(e => e.id)) + 1;
 } else {
-// Если база пустая - начинаем с чистого списка
+// Если база пустая - используем пустой список
 employees = [];
 nextEmployeeId = 101;
 }
-// ⬆️ ИСПРАВЛЕННЫЙ БЛОК ⬆️
 
 console.log('✅ Сотрудники загружены:', employees);
 
