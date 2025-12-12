@@ -4,255 +4,255 @@
 <meta charset="UTF-8">
 <title>Севстар • Оценка сотрудников</title>
 <style>
-    body {
-        margin: 0;
-        font-family: "Inter", Arial, sans-serif;
-        background: #FFFFFF;
-        color: #353333;
-        padding: 20px;
-    }
+body {
+margin: 0;
+font-family: "Inter", Arial, sans-serif;
+background: #FFFFFF;
+color: #353333;
+padding: 20px;
+}
 
-    .header {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        margin-bottom: 20px;
-    }
+.header {
+display: flex;
+align-items: center;
+gap: 16px;
+margin-bottom: 20px;
+}
 
-    .header img {
-        height: 48px;
-    }
+.header img {
+height: 48px;
+}
 
-    .department-title {
-        font-size: 22px;
-        font-weight: 700;
-        color: #642D90;
-    }
+.department-title {
+font-size: 22px;
+font-weight: 700;
+color: #642D90;
+}
 
-    .add-employee-btn {
-        background: #ECB144;
-        color: #353333;
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        margin-bottom: 20px;
-        width: 100%;
-    }
+.add-employee-btn {
+background: #ECB144;
+color: #353333;
+padding: 12px 20px;
+border-radius: 10px;
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+border: none;
+margin-bottom: 20px;
+width: 100%;
+}
 
-    .employee-card {
-        background: #FFFFFF;
-        border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(100,45,144,0.15);
-        padding: 16px 20px;
-        margin-bottom: 16px;
-    }
+.employee-card {
+background: #FFFFFF;
+border-radius: 14px;
+box-shadow: 0 4px 12px rgba(100,45,144,0.15);
+padding: 16px 20px;
+margin-bottom: 16px;
+}
 
-    .emp-name {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 4px;
-        cursor: pointer;
-        display: inline-block;
-        border-bottom: 1px dashed #642D90;
-    }
+.emp-name {
+font-size: 18px;
+font-weight: 600;
+margin-bottom: 4px;
+cursor: pointer;
+display: inline-block;
+border-bottom: 1px dashed #642D90;
+}
 
-    .emp-name:hover {
-        color: #642D90;
-    }
+.emp-name:hover {
+color: #642D90;
+}
 
-    .emp-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px;
-    }
+.emp-top {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 8px;
+}
 
-    .emp-info {
-        margin-bottom: 10px;
-    }
+.emp-info {
+margin-bottom: 10px;
+}
 
-    .button {
-        background: #642D90;
-        color: #FFFFFF;
-        padding: 10px 16px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        cursor: pointer;
-        display: inline-block;
-        margin-top: 10px;
-        border: none;
-    }
+.button {
+background: #642D90;
+color: #FFFFFF;
+padding: 10px 16px;
+border-radius: 10px;
+text-decoration: none;
+font-weight: 600;
+cursor: pointer;
+display: inline-block;
+margin-top: 10px;
+border: none;
+}
 
-    .upload-button {
-        background: #ECB144;
-        color: #353333;
-        padding: 6px 12px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-        user-select: none;
-    }
+.upload-button {
+background: #ECB144;
+color: #353333;
+padding: 6px 12px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: 0.2s;
+user-select: none;
+}
 
-    .upload-button:hover {
-        background: #d59d3c;
-    }
+.upload-button:hover {
+background: #d59d3c;
+}
 
-    .delete-btn {
-        background: #ff4444;
-        color: white;
-        padding: 6px 12px;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        border: none;
-        margin-left: 8px;
-    }
+.delete-btn {
+background: #ff4444;
+color: white;
+padding: 6px 12px;
+border-radius: 10px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+border: none;
+margin-left: 8px;
+}
 
-    .details {
-        margin-top: 12px;
-        background: #F8F5FC;
-        padding: 12px;
-        border-radius: 10px;
-        border-left: 4px solid #ECB144;
-    }
+.details {
+margin-top: 12px;
+background: #F8F5FC;
+padding: 12px;
+border-radius: 10px;
+border-left: 4px solid #ECB144;
+}
 
-    .date-link {
-        color: #642D90;
-        cursor: pointer;
-        text-decoration: underline;
-        font-weight: 600;
-    }
+.date-link {
+color: #642D90;
+cursor: pointer;
+text-decoration: underline;
+font-weight: 600;
+}
 
-    .date-link:hover {
-        color: #ECB144;
-    }
+.date-link:hover {
+color: #ECB144;
+}
 
-    .analysis-detail {
-        background: white;
-        padding: 12px;
-        margin: 10px 0;
-        border-radius: 8px;
-        border-left: 3px solid #642D90;
-    }
+.analysis-detail {
+background: white;
+padding: 12px;
+margin: 10px 0;
+border-radius: 8px;
+border-left: 3px solid #642D90;
+}
 
-    .dialog-item {
-        padding: 8px;
-        background: #f9f9f9;
-        margin: 6px 0;
-        border-radius: 6px;
-        font-size: 13px;
-    }
+.dialog-item {
+padding: 8px;
+background: #f9f9f9;
+margin: 6px 0;
+border-radius: 6px;
+font-size: 13px;
+}
 
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1000;
-        overflow-y: auto;
-    }
+.modal {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+overflow-y: auto;
+}
 
-    .modal-content {
-        background: white;
-        margin: 50px auto;
-        padding: 20px;
-        border-radius: 14px;
-        max-width: 600px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
+.modal-content {
+background: white;
+margin: 50px auto;
+padding: 20px;
+border-radius: 14px;
+max-width: 600px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
 
-    .modal-input {
-        width: 100%;
-        padding: 10px;
-        margin: 10px 0;
-        border: 2px solid #642D90;
-        border-radius: 8px;
-        font-size: 14px;
-        box-sizing: border-box;
-    }
+.modal-input {
+width: 100%;
+padding: 10px;
+margin: 10px 0;
+border: 2px solid #642D90;
+border-radius: 8px;
+font-size: 14px;
+box-sizing: border-box;
+}
 
-    .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-    }
+.modal-buttons {
+display: flex;
+gap: 10px;
+margin-top: 20px;
+}
 
-    .modal-btn {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        cursor: pointer;
-    }
+.modal-btn {
+flex: 1;
+padding: 10px;
+border: none;
+border-radius: 8px;
+font-weight: 600;
+cursor: pointer;
+}
 
-    .modal-btn-save {
-        background: #642D90;
-        color: white;
-    }
+.modal-btn-save {
+background: #642D90;
+color: white;
+}
 
-    .modal-btn-cancel {
-        background: #ddd;
-        color: #333;
-    }
+.modal-btn-cancel {
+background: #ddd;
+color: #333;
+}
 
-    .loader {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        padding: 30px;
-        border-radius: 14px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        z-index: 2000;
-        text-align: center;
-    }
+.loader {
+display: none;
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: white;
+padding: 30px;
+border-radius: 14px;
+box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+z-index: 2000;
+text-align: center;
+}
 
-    .loader-backdrop {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1999;
-    }
+.loader-backdrop {
+display: none;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+z-index: 1999;
+}
 
-    .spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #642D90;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 15px;
-    }
+.spinner {
+border: 4px solid #f3f3f3;
+border-top: 4px solid #642D90;
+border-radius: 50%;
+width: 40px;
+height: 40px;
+animation: spin 1s linear infinite;
+margin: 0 auto 15px;
+}
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
 </style>
 </head>
 
 <body>
 
 <div class="header">
-    <img src="logo.png">
-    <div class="department-title">Севстар • Оценка сотрудников</div>
+<img src="logo.png">
+<div class="department-title">Севстар • Оценка сотрудников</div>
 </div>
 
 <button class="add-employee-btn" onclick="openAddEmployeeModal()">➕ Добавить сотрудника</button>
@@ -261,32 +261,30 @@
 
 <div class="loader-backdrop" id="loaderBackdrop"></div>
 <div class="loader" id="loader">
-    <div class="spinner"></div>
-    <div id="loaderText">Загрузка и обработка файла...</div>
+<div class="spinner"></div>
+<div id="loaderText">Загрузка и обработка файла...</div>
 </div>
 
-<!-- Модальное окно для добавления сотрудника -->
 <div id="addEmployeeModal" class="modal">
-    <div class="modal-content">
-        <h3 style="margin-top: 0;">Новый сотрудник</h3>
-        <input type="text" id="newEmpName" class="modal-input" placeholder="ФИО сотрудника">
-        <input type="text" id="newEmpPosition" class="modal-input" placeholder="Должность">
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-save" onclick="saveNewEmployee()">Сохранить</button>
-            <button class="modal-btn modal-btn-cancel" onclick="closeAddEmployeeModal()">Отмена</button>
-        </div>
-    </div>
+<div class="modal-content">
+<h3 style="margin-top: 0;">Новый сотрудник</h3>
+<input type="text" id="newEmpName" class="modal-input" placeholder="ФИО сотрудника">
+<input type="text" id="newEmpPosition" class="modal-input" placeholder="Должность">
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-save" onclick="saveNewEmployee()">Сохранить</button>
+<button class="modal-btn modal-btn-cancel" onclick="closeAddEmployeeModal()">Отмена</button>
+</div>
+</div>
 </div>
 
-<!-- Модальное окно для деталей анализа -->
 <div id="analysisModal" class="modal">
-    <div class="modal-content">
-        <h3 id="analysisTitle"></h3>
-        <div id="analysisContent"></div>
-        <div class="modal-buttons">
-            <button class="modal-btn modal-btn-cancel" onclick="closeAnalysisModal()">Закрыть</button>
-        </div>
-    </div>
+<div class="modal-content">
+<h3 id="analysisTitle"></h3>
+<div id="analysisContent"></div>
+<div class="modal-buttons">
+<button class="modal-btn modal-btn-cancel" onclick="closeAnalysisModal()">Закрыть</button>
+</div>
+</div>
 </div>
 
 <script>
@@ -303,433 +301,426 @@ let analysisData = {};
 let nextEmployeeId = 106; // Начальный ID для новых сотрудников
 
 function showLoader(text = 'Загрузка...') {
-    document.getElementById('loaderText').innerText = text;
-    document.getElementById('loader').style.display = 'block';
-    document.getElementById('loaderBackdrop').style.display = 'block';
+document.getElementById('loaderText').innerText = text;
+document.getElementById('loader').style.display = 'block';
+document.getElementById('loaderBackdrop').style.display = 'block';
 }
 
 function hideLoader() {
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('loaderBackdrop').style.display = 'none';
+document.getElementById('loader').style.display = 'none';
+document.getElementById('loaderBackdrop').style.display = 'none';
 }
 
 // ✅ ЗАГРУЗКА СОТРУДНИКОВ ИЗ N8N
 async function loadEmployees() {
-    try {
-        console.log('🔄 Загружаем сотрудников из N8N...');
-        
-        const response = await fetch(GET_EMPLOYEES_URL, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+try {
+console.log('🔄 Загружаем сотрудников из N8N...');
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+const response = await fetch(GET_EMPLOYEES_URL, {
+method: 'GET',
+headers: {
+'Content-Type': 'application/json'
+}
+});
 
-        const rows = await response.json();
-        
-        console.log('👥 Получено сотрудников:', rows);
-        
-        if (Array.isArray(rows) && rows.length > 0) {
-            employees = rows.map(row => ({
-                id: parseInt(row.employee_id),
-                name: row.name,
-                position: row.position,
-                expanded: false
-            }));
-            
-            // Обновляем nextEmployeeId
-            nextEmployeeId = Math.max(...employees.map(e => e.id)) + 1;
-        } else {
-            // Если база пустая - используем дефолтных сотрудников
-            employees = [
-                { id: 101, name: "Иванов Вася", position: "Оператор", expanded: false },
-                { id: 102, name: "Петрова Анна", position: "Старший оператор", expanded: false }
-            ];
-            nextEmployeeId = 103;
-        }
+if (!response.ok) {
+throw new Error(`HTTP error! status: ${response.status}`);
+}
 
-        console.log('✅ Сотрудники загружены:', employees);
-        
-    } catch (error) {
-        console.error('❌ Ошибка загрузки сотрудников:', error);
-        // При ошибке используем дефолтных
-        employees = [
-            { id: 101, name: "Иванов Вася", position: "Оператор", expanded: false },
-            { id: 102, name: "Петрова Анна", position: "Старший оператор", expanded: false }
-        ];
-        nextEmployeeId = 103;
-    }
+// ⬇️ ИСПРАВЛЕННЫЙ БЛОК ДЛЯ ОБРАБОТКИ СТРУКТУРЫ N8N (item.json.field) ⬇️
+const rows = await response.json();
+console.log('👥 Получено сотрудников (сырая структура):', rows);
+
+if (Array.isArray(rows) && rows.length > 0) {
+employees = rows.map(item => ({
+    id: parseInt(item.json.employee_id),
+    name: item.json.name,
+    position: item.json.position,
+    expanded: false
+}));
+nextEmployeeId = Math.max(...employees.map(e => e.id)) + 1;
+} else {
+// Если база пустая - начинаем с чистого списка
+employees = [];
+nextEmployeeId = 101;
+}
+// ⬆️ ИСПРАВЛЕННЫЙ БЛОК ⬆️
+
+console.log('✅ Сотрудники загружены:', employees);
+
+} catch (error) {
+console.error('❌ Ошибка загрузки сотрудников:', error);
+// При ошибке используем пустой список, чтобы фронтенд не упал
+employees = [];
+nextEmployeeId = 101;
+}
 }
 
 // ✅ ЗАГРУЗКА АНАЛИЗОВ ЧЕРЕЗ WEBHOOK
 async function loadAnalysisData() {
-    try {
-        console.log('🔄 Загружаем анализы через webhook...');
-        
-        const response = await fetch(GET_ANALYSIS_URL, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+try {
+console.log('🔄 Загружаем анализы через webhook...');
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+const response = await fetch(GET_ANALYSIS_URL, {
+method: 'GET',
+headers: {
+'Content-Type': 'application/json'
+}
+});
 
-        const rows = await response.json();
-        
-        console.log('📊 Получено анализов:', rows);
-        
-        // Группируем по employee_id
-        analysisData = {};
-        
-        if (Array.isArray(rows)) {
-            rows.forEach(row => {
-                const empId = parseInt(row.employee_id);
-                if (!analysisData[empId]) {
-                    analysisData[empId] = [];
-                }
-                analysisData[empId].push({
-                    date: row.analyzed_at,
-                    dialogsCount: row.dialogs_count,
-                    dialogIds: row.dialog_ids || '',
-                    complexityLevel: row.complexity_level,
-                    ierCoefficient: row.ier_coefficient,
-                    justification: row.justification
-                });
-            });
-        }
+if (!response.ok) {
+throw new Error(`HTTP error! status: ${response.status}`);
+}
 
-        console.log('✅ Анализы сгруппированы:', analysisData);
-        
-    } catch (error) {
-        console.error('❌ Ошибка загрузки анализов:', error);
-    }
+const rows = await response.json();
+
+console.log('📊 Получено анализов:', rows);
+
+// Группируем по employee_id
+analysisData = {};
+
+if (Array.isArray(rows)) {
+rows.forEach(row => {
+const empId = parseInt(row.employee_id);
+if (!analysisData[empId]) {
+analysisData[empId] = [];
+}
+analysisData[empId].push({
+date: row.analyzed_at,
+dialogsCount: row.dialogs_count,
+dialogIds: row.dialog_ids || '',
+complexityLevel: row.complexity_level,
+ierCoefficient: row.ier_coefficient,
+justification: row.justification
+});
+});
+}
+
+console.log('✅ Анализы сгруппированы:', analysisData);
+
+} catch (error) {
+console.error('❌ Ошибка загрузки анализов:', error);
+}
 }
 
 // ✅ СИНХРОНИЗАЦИЯ СОТРУДНИКОВ С N8N
 async function syncEmployeesToDB() {
-    try {
-        const employeesData = employees.map(emp => ({
-            id: emp.id,
-            name: emp.name,
-            position: emp.position,
-            summary: {
-                final_score: 0,
-                final_grade: "N/A",
-                last_score: 0,
-                last_grade: "N/A",
-                last_review_date: ""
-            },
-            details: {
-                data: {
-                    grade_history: [],
-                    review_details: []
-                }
-            }
-        }));
+try {
+const employeesData = employees.map(emp => ({
+id: emp.id,
+name: emp.name,
+position: emp.position,
+summary: {
+final_score: 0,
+final_grade: "N/A",
+last_score: 0,
+last_grade: "N/A",
+last_review_date: ""
+},
+details: {
+data: {
+grade_history: [],
+review_details: []
+}
+}
+}));
 
-        const response = await fetch(SYNC_EMPLOYEES_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ employees: employeesData })
-        });
+const response = await fetch(SYNC_EMPLOYEES_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ employees: employeesData })
+});
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+if (!response.ok) {
+throw new Error(`HTTP error! status: ${response.status}`);
+}
 
-        console.log('✅ Сотрудники синхронизированы с БД');
-        
-    } catch (error) {
-        console.error('❌ Ошибка синхронизации:', error);
-    }
+console.log('✅ Сотрудники синхронизированы с БД');
+
+} catch (error) {
+console.error('❌ Ошибка синхронизации:', error);
+}
 }
 
 // ✅ РАСЧЕТ СРЕДНЕГО ИЭР
 function calculateAverageIER(employeeId) {
-    const analyses = analysisData[employeeId] || [];
-    if (analyses.length === 0) return 0;
-    
-    const sum = analyses.reduce((acc, a) => acc + parseFloat(a.ierCoefficient || 0), 0);
-    return (sum / analyses.length).toFixed(2);
+const analyses = analysisData[employeeId] || [];
+if (analyses.length === 0) return 0;
+
+const sum = analyses.reduce((acc, a) => acc + parseFloat(a.ierCoefficient || 0), 0);
+return (sum / analyses.length).toFixed(2);
 }
 
 // ✅ ПОЛУЧИТЬ ПОСЛЕДНИЙ ИЭР
 function getLastIER(employeeId) {
-    const analyses = analysisData[employeeId] || [];
-    if (analyses.length === 0) return { ier: 0, date: '—' };
-    
-    const sorted = analyses.sort((a, b) => new Date(b.date) - new Date(a.date));
-    return {
-        ier: sorted[0].ierCoefficient,
-        date: new Date(sorted[0].date).toLocaleDateString('ru-RU')
-    };
+const analyses = analysisData[employeeId] || [];
+if (analyses.length === 0) return { ier: 0, date: '—' };
+
+const sorted = analyses.sort((a, b) => new Date(b.date) - new Date(a.date));
+return {
+ier: sorted[0].ierCoefficient,
+date: new Date(sorted[0].date).toLocaleDateString('ru-RU')
+};
 }
 
 // ✅ ПОЛУЧИТЬ ИСТОРИЮ ОЦЕНОК
 function getAnalysisHistory(employeeId) {
-    const analyses = analysisData[employeeId] || [];
-    return analyses.sort((a, b) => new Date(b.date) - new Date(a.date));
+const analyses = analysisData[employeeId] || [];
+return analyses.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 // ✅ ПОКАЗАТЬ ДЕТАЛИ АНАЛИЗА
 function showAnalysisDetails(employeeId, analysisDate) {
-    const analyses = analysisData[employeeId] || [];
-    const analysis = analyses.find(a => a.date === analysisDate);
-    
-    if (!analysis) {
-        alert('Анализ не найден');
-        return;
-    }
+const analyses = analysisData[employeeId] || [];
+const analysis = analyses.find(a => a.date === analysisDate);
 
-    const modal = document.getElementById('analysisModal');
-    const title = document.getElementById('analysisTitle');
-    const content = document.getElementById('analysisContent');
+if (!analysis) {
+alert('Анализ не найден');
+return;
+}
 
-    const employee = employees.find(e => e.id === employeeId);
-    const dateStr = new Date(analysis.date).toLocaleDateString('ru-RU', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
+const modal = document.getElementById('analysisModal');
+const title = document.getElementById('analysisTitle');
+const content = document.getElementById('analysisContent');
 
-    title.innerText = `🤖 AI-Анализ: ${employee.name} — ${dateStr}`;
+const employee = employees.find(e => e.id === employeeId);
+const dateStr = new Date(analysis.date).toLocaleDateString('ru-RU', {
+year: 'numeric',
+month: 'long',
+day: 'numeric',
+hour: '2-digit',
+minute: '2-digit'
+});
 
-    let html = `
-        <div class="analysis-detail">
-            <b>📊 Коэффициент ИЭР:</b> ${analysis.ierCoefficient}<br>
-            <b>📈 Уровень сложности:</b> ${analysis.complexityLevel}<br>
-            <b>📁 Обработано диалогов:</b> ${analysis.dialogsCount}<br><br>
-            
-            <b>💬 Обоснование:</b><br>
-            <p style="background: #f9f9f9; padding: 10px; border-radius: 6px;">${analysis.justification}</p><br>
-    `;
+title.innerText = `🤖 AI-Анализ: ${employee.name} — ${dateStr}`;
 
-    if (analysis.dialogIds) {
-        html += `<b>📋 Диалоги:</b><br>`;
-        const dialogIds = analysis.dialogIds.toString().split(',').map(id => id.trim());
-        dialogIds.forEach((dialogId, index) => {
-            html += `<div class="dialog-item">📄 Диалог #${index + 1} (ID: ${dialogId})</div>`;
-        });
-    }
+let html = `
+<div class="analysis-detail">
+<b>📊 Коэффициент ИЭР:</b> ${analysis.ierCoefficient}<br>
+<b>📈 Уровень сложности:</b> ${analysis.complexityLevel}<br>
+<b>📁 Обработано диалогов:</b> ${analysis.dialogsCount}<br><br>
 
-    html += `</div>`;
+<b>💬 Обоснование:</b><br>
+<p style="background: #f9f9f9; padding: 10px; border-radius: 6px;">${analysis.justification}</p><br>
+`;
 
-    content.innerHTML = html;
-    modal.style.display = 'block';
+if (analysis.dialogIds) {
+html += `<b>📋 Диалоги:</b><br>`;
+const dialogIds = analysis.dialogIds.toString().split(',').map(id => id.trim());
+dialogIds.forEach((dialogId, index) => {
+html += `<div class="dialog-item">📄 Диалог #${index + 1} (ID: ${dialogId})</div>`;
+});
+}
+
+html += `</div>`;
+
+content.innerHTML = html;
+modal.style.display = 'block';
 }
 
 function closeAnalysisModal() {
-    document.getElementById('analysisModal').style.display = 'none';
+document.getElementById('analysisModal').style.display = 'none';
 }
 
 // ✅ ЗАГРУЗКА ДИАЛОГОВ
 async function handleUpload(event, employeeId) {
-    const file = event.target.files[0];
-    if (!file) return;
+const file = event.target.files[0];
+if (!file) return;
 
-    const employee = employees.find(e => e.id === employeeId);
-    
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('employeeId', employeeId);
-    formData.append('employeeName', employee.name);
+const employee = employees.find(e => e.id === employeeId);
 
-    showLoader('Загрузка и AI-анализ диалогов...');
+const formData = new FormData();
+formData.append('file', file);
+formData.append('employeeId', employeeId);
+formData.append('employeeName', employee.name);
 
-    try {
-        const response = await fetch(UPLOAD_DIALOGS_URL, {
-            method: 'POST',
-            body: formData
-        });
+showLoader('Загрузка и AI-анализ диалогов...');
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+try {
+const response = await fetch(UPLOAD_DIALOGS_URL, {
+method: 'POST',
+body: formData
+});
 
-        const result = await response.json();
-        
-        hideLoader();
-        
-        alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Проверьте N8N'}`);
-        
-        // ⚡ АВТОМАТИЧЕСКИ ОБНОВЛЯЕМ АНАЛИЗЫ
-        setTimeout(async () => {
-            await loadAnalysisData();
-            render();
-        }, 2000);
-        
-    } catch (error) {
-        hideLoader();
-        alert(`❌ Ошибка при загрузке файла:\n${error.message}\n\nПроверьте подключение и попробуйте снова.`);
-        console.error('💥 Upload error:', error);
-    }
+if (!response.ok) {
+throw new Error(`HTTP error! status: ${response.status}`);
+}
 
-    event.target.value = '';
+const result = await response.json();
+
+hideLoader();
+
+alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Проверьте N8N'}`);
+
+// ⚡ АВТОМАТИЧЕСКИ ОБНОВЛЯЕМ АНАЛИЗЫ
+setTimeout(async () => {
+await loadAnalysisData();
+render();
+}, 2000);
+
+} catch (error) {
+hideLoader();
+alert(`❌ Ошибка при загрузке файла:\n${error.message}\n\nПроверьте подключение и попробуйте снова.`);
+console.error('💥 Upload error:', error);
+}
+
+event.target.value = '';
 }
 
 async function editEmployeeName(employeeId, currentName) {
-    const employee = employees.find(e => e.id === employeeId);
-    if (!employee) return;
+const employee = employees.find(e => e.id === employeeId);
+if (!employee) return;
 
-    const newName = prompt("Введите новое имя сотрудника:", currentName);
-    if (newName && newName.trim() !== "" && newName.trim() !== currentName) {
-        employee.name = newName.trim();
-        render();
-        
-        // Синхронизируем с БД
-        await syncEmployeesToDB();
-    }
+const newName = prompt("Введите новое имя сотрудника:", currentName);
+if (newName && newName.trim() !== "" && newName.trim() !== currentName) {
+employee.name = newName.trim();
+render();
+
+// Синхронизируем с БД
+await syncEmployeesToDB();
+}
 }
 
 async function deleteEmployee(employeeId) {
-    if (!confirm("Вы уверены, что хотите удалить этого сотрудника?")) return;
-    
-    const index = employees.findIndex(e => e.id === employeeId);
-    if (index !== -1) {
-        employees.splice(index, 1);
-        render();
-        
-        // Синхронизируем с БД
-        await syncEmployeesToDB();
-    }
+if (!confirm("Вы уверены, что хотите удалить этого сотрудника?")) return;
+
+const index = employees.findIndex(e => e.id === employeeId);
+if (index !== -1) {
+employees.splice(index, 1);
+render();
+
+// Синхронизируем с БД
+await syncEmployeesToDB();
+}
 }
 
 function openAddEmployeeModal() {
-    document.getElementById('addEmployeeModal').style.display = 'block';
-    document.getElementById('newEmpName').value = '';
-    document.getElementById('newEmpPosition').value = '';
+document.getElementById('addEmployeeModal').style.display = 'block';
+document.getElementById('newEmpName').value = '';
+document.getElementById('newEmpPosition').value = '';
 }
 
 function closeAddEmployeeModal() {
-    document.getElementById('addEmployeeModal').style.display = 'none';
+document.getElementById('addEmployeeModal').style.display = 'none';
 }
 
 async function saveNewEmployee() {
-    const name = document.getElementById('newEmpName').value.trim();
-    const position = document.getElementById('newEmpPosition').value.trim();
-    
-    if (!name || !position) {
-        alert("Пожалуйста, заполните все поля");
-        return;
-    }
+const name = document.getElementById('newEmpName').value.trim();
+const position = document.getElementById('newEmpPosition').value.trim();
 
-    const newEmployee = {
-        id: nextEmployeeId++,
-        name: name,
-        position: position,
-        expanded: false
-    };
+if (!name || !position) {
+alert("Пожалуйста, заполните все поля");
+return;
+}
 
-    employees.push(newEmployee);
-    closeAddEmployeeModal();
-    render();
-    
-    // Синхронизируем с БД
-    await syncEmployeesToDB();
+const newEmployee = {
+id: nextEmployeeId++,
+name: name,
+position: position,
+expanded: false
+};
+
+employees.push(newEmployee);
+closeAddEmployeeModal();
+render();
+
+// Синхронизируем с БД
+await syncEmployeesToDB();
 }
 
 function render() {
-    const wrapper = document.getElementById("content");
-    wrapper.innerHTML = "";
+const wrapper = document.getElementById("content");
+wrapper.innerHTML = "";
 
-    const dept = document.createElement("h2");
-    dept.innerText = "Отдел: Колл-центр";
-    wrapper.appendChild(dept);
+const dept = document.createElement("h2");
+dept.innerText = "Отдел: Колл-центр";
+wrapper.appendChild(dept);
 
-    employees.forEach(emp => {
-        const card = document.createElement("div");
-        card.className = "employee-card";
+employees.forEach(emp => {
+const card = document.createElement("div");
+card.className = "employee-card";
 
-        const avgIER = calculateAverageIER(emp.id);
-        const lastIER = getLastIER(emp.id);
-        const history = getAnalysisHistory(emp.id);
+const avgIER = calculateAverageIER(emp.id);
+const lastIER = getLastIER(emp.id);
+const history = getAnalysisHistory(emp.id);
 
-        card.innerHTML = `
-            <div class="emp-top">
-                <div class="emp-name" onclick="editEmployeeName(${emp.id}, '${emp.name.replace(/'/g, "\\'")}')">${emp.name} ✏️</div>
+card.innerHTML = `
+<div class="emp-top">
+<div class="emp-name" onclick="editEmployeeName(${emp.id}, '${emp.name.replace(/'/g, "\\'")}')">${emp.name} ✏️</div>
 
-                <div>
-                    <label class="upload-button">
-                        📤 Загрузить диалоги
-                        <input type="file" style="display:none" accept=".txt,.json,.csv,.xlsx,.xls,.xml,.docx,.doc,.pdf" onchange="handleUpload(event, ${emp.id})">
-                    </label>
-                    <button class="delete-btn" onclick="deleteEmployee(${emp.id})">🗑️</button>
-                </div>
-            </div>
+<div>
+<label class="upload-button">
+📤 Загрузить диалоги
+<input type="file" style="display:none" accept=".txt,.json,.csv,.xlsx,.xls,.xml,.docx,.doc,.pdf" onchange="handleUpload(event, ${emp.id})">
+</label>
+<button class="delete-btn" onclick="deleteEmployee(${emp.id})">🗑️</button>
+</div>
+</div>
 
-            <div class="emp-info">
-                Должность: ${emp.position}<br>
-                <b>🎯 Итоговый коэффициент ИЭР:</b> ${avgIER || '—'}<br>
-                <b>📊 Последний коэффициент ИЭР:</b> ${lastIER.ier || '—'}<br>
-                Дата последней оценки: ${lastIER.date}
-            </div>
-        `;
+<div class="emp-info">
+Должность: ${emp.position}<br>
+<b>🎯 Итоговый коэффициент ИЭР:</b> ${avgIER || '—'}<br>
+<b>📊 Последний коэффициент ИЭР:</b> ${lastIER.ier || '—'}<br>
+Дата последней оценки: ${lastIER.date}
+</div>
+`;
 
-        const btn = document.createElement("div");
-        btn.className = "button";
-        btn.innerText = emp.expanded ? "Скрыть" : "Подробнее";
-        btn.onclick = () => {
-            emp.expanded = !emp.expanded;
-            render();
-        };
-        card.appendChild(btn);
+const btn = document.createElement("div");
+btn.className = "button";
+btn.innerText = emp.expanded ? "Скрыть" : "Подробнее";
+btn.onclick = () => {
+emp.expanded = !emp.expanded;
+render();
+};
+card.appendChild(btn);
 
-        if (emp.expanded) {
-            const det = document.createElement("div");
-            det.className = "details";
+if (emp.expanded) {
+const det = document.createElement("div");
+det.className = "details";
 
-            if (history.length > 0) {
-                det.innerHTML = `<b>📅 История оценок (кликните на дату для деталей):</b><br><br>`;
+if (history.length > 0) {
+det.innerHTML = `<b>📅 История оценок (кликните на дату для деталей):</b><br><br>`;
 
-                history.forEach(h => {
-                    const dateStr = new Date(h.date).toLocaleDateString('ru-RU');
-                    det.innerHTML += `
-                        <span class="date-link" onclick="showAnalysisDetails(${emp.id}, '${h.date}')">
-                            📅 ${dateStr}
-                        </span> — <b>ИЭР: ${h.ierCoefficient}</b> (Диалогов: ${h.dialogsCount}, Сложность: ${h.complexityLevel})<br>
-                    `;
-                });
-            } else {
-                det.innerHTML = `<i>Данные по анализу отсутствуют. Загрузите диалоги для начала AI-анализа.</i>`;
-            }
+history.forEach(h => {
+const dateStr = new Date(h.date).toLocaleDateString('ru-RU');
+det.innerHTML += `
+<span class="date-link" onclick="showAnalysisDetails(${emp.id}, '${h.date}')">
+📅 ${dateStr}
+</span> — <b>ИЭР: ${h.ierCoefficient}</b> (Диалогов: ${h.dialogsCount}, Сложность: ${h.complexityLevel})<br>
+`;
+});
+} else {
+det.innerHTML = `<i>Данные по анализу отсутствуют. Загрузите диалоги для начала AI-анализа.</i>`;
+}
 
-            card.appendChild(det);
-        }
+card.appendChild(det);
+}
 
-        wrapper.appendChild(card);
-    });
+wrapper.appendChild(card);
+});
 }
 
 window.onclick = function(event) {
-    const addModal = document.getElementById('addEmployeeModal');
-    const analysisModal = document.getElementById('analysisModal');
-    
-    if (event.target === addModal) {
-        closeAddEmployeeModal();
-    }
-    if (event.target === analysisModal) {
-        closeAnalysisModal();
-    }
+const addModal = document.getElementById('addEmployeeModal');
+const analysisModal = document.getElementById('analysisModal');
+
+if (event.target === addModal) {
+closeAddEmployeeModal();
+}
+if (event.target === analysisModal) {
+closeAnalysisModal();
+}
 }
 
 // ✅ ИНИЦИАЛИЗАЦИЯ: Загружаем сотрудников и анализы
 async function init() {
-    showLoader('Загрузка данных из базы...');
-    
-    await loadEmployees();
-    await loadAnalysisData();
-    
-    hideLoader();
-    render();
+showLoader('Загрузка данных из базы...');
+
+await loadEmployees();
+await loadAnalysisData();
+
+hideLoader();
+render();
 }
 
 init();
