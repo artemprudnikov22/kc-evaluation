@@ -373,7 +373,6 @@ throw new Error(`HTTP error! status: ${response.status}`);
 }
 
 const rows = await response.json();
-
 console.log('📊 Получено анализов:', rows);
 
 analysisData = {};
@@ -522,15 +521,40 @@ function closeAnalysisModal() {
 document.getElementById('analysisModal').style.display = 'none';
 }
 
-// ✅ УЛУЧШЕННАЯ ЗАГРУЗКА ДИАЛОГОВ С ПРОГРЕСС-БАРОМ И ТАЙМАУТОМ 15 МИНУТ
+// ✅ ДЕТАЛЬНАЯ ДИАГНОСТИКА ЗАГРУЗКИ ФАЙЛОВ
 async function handleUpload(event, employeeId) {
 const file = event.target.files[0];
 if (!file) return;
 
+console.log('='.repeat(60));
+console.log('=== НАЧАЛО ЗАГРУЗКИ ФАЙЛА ===');
+console.log('='.repeat(60));
+console.log('📁 Имя файла:', file.name);
+console.log('📊 Размер (байт):', file.size);
+console.log('📊 Размер (МБ):', (file.size / 1024 / 1024).toFixed(2));
+console.log('📄 Тип MIME:', file.type);
+console.log('📅 Дата изменения:', new Date(file.lastModified).toLocaleString('ru-RU'));
+
 const employee = employees.find(e => e.id === employeeId);
 const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
-    
-console.log('📁 Файл:', file.name, 'Размер:', fileSizeMB, 'МБ');
+
+// ПРОВЕРКА: Может ли браузер прочитать файл?
+console.log('🔍 Проверяем возможность чтения файла...');
+try {
+const arrayBuffer = await file.arrayBuffer();
+console.log('✅ Файл успешно прочитан браузером');
+console.log('📦 Размер буфера:', arrayBuffer.byteLength, 'байт');
+} catch (readError) {
+console.error('❌ КРИТИЧЕСКАЯ ОШИБКА: Файл не читается!', readError);
+hideLoader();
+alert(`Не удалось прочитать файл:\n${readError.message}\n\nПопробуйте другой файл.`);
+event.target.value = '';
+return;
+}
+
+console.log('👤 Employee ID:', employeeId);
+console.log('👤 Employee Name:', employee.name);
+console.log('🎯 URL загрузки:', UPLOAD_DIALOGS_URL);
 
 // Предупреждение для больших файлов
 if (file.size > 1024 * 1024 * 1.5) {
@@ -542,6 +566,7 @@ const confirm = window.confirm(
 );
 
 if (!confirm) {
+    console.log('⚠️ Пользователь отменил загрузку большого файла');
     event.target.value = '';
     return;
 }
@@ -552,71 +577,123 @@ formData.append('file', file);
 formData.append('employeeId', employeeId);
 formData.append('employeeName', employee.name);
 
+console.log('📦 FormData создан с полями:');
+console.log('   - file:', file.name);
+console.log('   - employeeId:', employeeId);
+console.log('   - employeeName:', employee.name);
+
 showLoader(`Загрузка файла "${file.name}"<br>(${fileSizeMB} МБ)...<br><br>⏳ Это может занять до 10 минут.<br>Не закрывайте страницу!`);
 
 try {
-console.log('🚀 Отправляем файл на n8n...');
-console.log('URL:', UPLOAD_DIALOGS_URL);
+console.log('🚀 Начинаем отправку через XMLHttpRequest...');
 
-// Используем XMLHttpRequest для отслеживания прогресса
 const xhr = new XMLHttpRequest();
+const startTime = Date.now();
 
 const uploadPromise = new Promise((resolve, reject) => {
     
-    // Прогресс загрузки
+    // Событие: Соединение установлено
+    xhr.addEventListener('loadstart', () => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.log(`🔌 [${elapsed}с] Соединение установлено, начинается передача данных...`);
+    });
+    
+    // Событие: Прогресс загрузки
     xhr.upload.addEventListener('progress', (e) => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         if (e.lengthComputable) {
             const percent = Math.round((e.loaded / e.total) * 100);
-            console.log(`📤 Загружено: ${percent}%`);
+            const loadedMB = (e.loaded / 1024 / 1024).toFixed(2);
+            const totalMB = (e.total / 1024 / 1024).toFixed(2);
+            const speed = (e.loaded / 1024 / (Date.now() - startTime)).toFixed(2);
+            
+            console.log(`📤 [${elapsed}с] Загружено: ${percent}% (${loadedMB} / ${totalMB} МБ) | Скорость: ${speed} КБ/с`);
+            
             document.getElementById('loaderText').innerHTML = 
-                `Загрузка файла: ${percent}%<br><br>⏳ Не закрывайте страницу!`;
+                `Загрузка файла: ${percent}%<br>(${loadedMB} / ${totalMB} МБ)<br><br>⏳ Не закрывайте страницу!`;
+        } else {
+            console.log(`📤 [${elapsed}с] Загрузка идет... (размер неопределен)`);
         }
     });
     
-    // Завершение загрузки
+    // Событие: Загрузка завершена, ожидаем ответ
+    xhr.upload.addEventListener('load', () => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.log(`✅ [${elapsed}с] Файл загружен на сервер, ожидаем ответа...`);
+        document.getElementById('loaderText').innerHTML = 
+            `Файл загружен!<br><br>🤖 AI анализирует диалоги...<br>⏳ Это может занять несколько минут.`;
+    });
+    
+    // Событие: Получен ответ от сервера
     xhr.addEventListener('load', () => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.log(`📥 [${elapsed}с] Ответ получен от сервера`);
+        console.log('📊 HTTP Статус:', xhr.status, xhr.statusText);
+        console.log('📝 Заголовки ответа:', xhr.getAllResponseHeaders());
+        console.log('📄 Тело ответа (первые 500 символов):', xhr.responseText.substring(0, 500));
+        
         if (xhr.status >= 200 && xhr.status < 300) {
             try {
                 const result = JSON.parse(xhr.responseText);
+                console.log('✅ JSON успешно распарсен:', result);
                 resolve(result);
             } catch (e) {
+                console.log('⚠️ Ответ не является JSON, принимаем как текст');
                 resolve({ success: true, message: xhr.responseText });
             }
         } else {
-            reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText}`));
+            console.error(`❌ Ошибка HTTP ${xhr.status}`);
+            reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText.substring(0, 200)}`));
         }
     });
     
-    // Ошибка сети
-    xhr.addEventListener('error', () => {
-        reject(new Error('Ошибка сети. Проверьте подключение к интернету.'));
+    // Событие: Ошибка сети
+    xhr.addEventListener('error', (e) => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.error(`💥 [${elapsed}с] ОШИБКА СЕТИ!`);
+        console.error('Event:', e);
+        console.error('ReadyState:', xhr.readyState);
+        console.error('Status:', xhr.status);
+        console.error('StatusText:', xhr.statusText);
+        
+        reject(new Error('Ошибка сети. Проверьте: 1) Подключение к интернету 2) Доступность n8n.decartus.team 3) Консоль для деталей'));
     });
     
-    // Таймаут (15 минут)
-    xhr.timeout = 900000;
+    // Событие: Таймаут
+    xhr.timeout = 900000; // 15 минут
     xhr.addEventListener('timeout', () => {
-        reject(new Error('Таймаут загрузки (15 минут). Попробуйте файл меньшего размера или разделите на части.'));
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.error(`⏱️ [${elapsed}с] ТАЙМАУТ! Запрос превысил 15 минут`);
+        reject(new Error('Таймаут загрузки (15 минут). Попробуйте файл меньшего размера.'));
+    });
+    
+    // Событие: Запрос отменен
+    xhr.addEventListener('abort', () => {
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
+        console.error(`🚫 [${elapsed}с] Запрос отменен пользователем или браузером`);
+        reject(new Error('Загрузка отменена'));
     });
     
     // Отправляем запрос
+    console.log('📡 Открываем POST соединение с:', UPLOAD_DIALOGS_URL);
     xhr.open('POST', UPLOAD_DIALOGS_URL);
+    
+    console.log('📡 Отправляем FormData...');
     xhr.send(formData);
+    console.log('✅ send() выполнен, ожидаем событий...');
 });
-
-// Меняем текст после загрузки файла (через 3 секунды)
-setTimeout(() => {
-    if (xhr.readyState === 4) return;
-    document.getElementById('loaderText').innerHTML = 
-        `Файл загружен!<br><br>🤖 AI анализирует диалоги...<br>⏳ Это может занять несколько минут.`;
-}, 3000);
 
 const result = await uploadPromise;
 
-console.log('✅ Результат:', result);
+const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+console.log('='.repeat(60));
+console.log(`✅ ЗАГРУЗКА ЗАВЕРШЕНА УСПЕШНО (${totalTime}с)`);
+console.log('='.repeat(60));
+console.log('Результат:', result);
 
 hideLoader();
 
-alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Данные обрабатываются'}`);
+alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Данные обрабатываются'}\nВремя: ${totalTime}с`);
 
 // Обновляем данные через 3 секунды
 setTimeout(async () => {
@@ -629,30 +706,37 @@ setTimeout(async () => {
 } catch (error) {
 hideLoader();
 
-console.error('💥 Ошибка:', error);
+const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
+console.log('='.repeat(60));
+console.error(`❌ ЗАГРУЗКА ЗАВЕРШЕНА С ОШИБКОЙ (${totalTime}с)`);
+console.log('='.repeat(60));
+console.error('Тип ошибки:', error.name);
+console.error('Сообщение:', error.message);
+console.error('Stack:', error.stack);
 
 if (error.message.includes('Таймаут')) {
     alert(
         `⏱️ ${error.message}\n\n` +
         `Файл: ${file.name}\n` +
-        `Размер: ${fileSizeMB} МБ\n\n` +
+        `Размер: ${fileSizeMB} МБ\n` +
+        `Время до ошибки: ${totalTime}с\n\n` +
         `💡 Попробуйте:\n` +
         `• Разделить файл на меньшие части\n` +
-        `• Загрузить меньше диалогов за раз\n` +
-        `• Проверить выполнение в n8n (возможно обработка идет в фоне)`
+        `• Проверить n8n Executions\n` +
+        `• Уменьшить batchSize в workflow`
     );
 } else if (error.message.includes('Ошибка сети')) {
     alert(
         `❌ ${error.message}\n\n` +
-        `Проверьте:\n` +
-        `• Подключение к интернету\n` +
-        `• Доступность сервера n8n\n` +
-        `• Консоль браузера (F12) для деталей`
+        `Файл: ${file.name}\n` +
+        `Время до ошибки: ${totalTime}с\n\n` +
+        `Откройте консоль (F12) и пришлите скриншот логов разработчику!`
     );
 } else {
     alert(
         `❌ Ошибка при загрузке:\n\n${error.message}\n\n` +
-        `Откройте консоль (F12) для подробностей.`
+        `Время до ошибки: ${totalTime}с\n\n` +
+        `Откройте консоль (F12) для полных деталей.`
     );
 }
 }
