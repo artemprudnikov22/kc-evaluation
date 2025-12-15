@@ -38,11 +38,10 @@ font-size: 16px;
 font-weight: 600;
 cursor: pointer;
 border: none;
-margin-bottom: 5px; /* Уменьшаем отступ для заметки */
+margin-bottom: 5px;
 width: 100%;
 }
 
-/* НОВЫЙ СТИЛЬ ДЛЯ ЗАМЕТКИ */
 .security-note {
 font-size: 13px;
 color: #666;
@@ -52,7 +51,7 @@ text-align: center;
 }
 
 .security-note span {
-    color: #ff4444; /* Красный для акцента */
+    color: #ff4444;
     font-weight: 600;
 }
 
@@ -116,8 +115,6 @@ user-select: none;
 .upload-button:hover {
 background: #d59d3c;
 }
-
-/* Удален стиль .delete-btn */
 
 .details {
 margin-top: 12px;
@@ -222,6 +219,7 @@ border-radius: 14px;
 box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 z-index: 2000;
 text-align: center;
+min-width: 300px;
 }
 
 .loader-backdrop {
@@ -302,10 +300,10 @@ const GET_ANALYSIS_URL = `${N8N_BASE_URL}/webhook/get-analyzed-dialogs`;
 // Хранилище данных
 let employees = [];
 let analysisData = {};
-let nextEmployeeId = 106; // Начальный ID для новых сотрудников
+let nextEmployeeId = 106;
 
 function showLoader(text = 'Загрузка...') {
-document.getElementById('loaderText').innerText = text;
+document.getElementById('loaderText').innerHTML = text;
 document.getElementById('loader').style.display = 'block';
 document.getElementById('loaderBackdrop').style.display = 'block';
 }
@@ -315,7 +313,7 @@ document.getElementById('loader').style.display = 'none';
 document.getElementById('loaderBackdrop').style.display = 'none';
 }
 
-// ✅ ЗАГРУЗКА СОТРУДНИКОВ ИЗ N8N (ИСПРАВЛЕНО: ожидается чистый JSON благодаря ноде Respond в n8n)
+// ✅ ЗАГРУЗКА СОТРУДНИКОВ ИЗ N8N
 async function loadEmployees() {
 try {
 console.log('🔄 Загружаем сотрудников из N8N...');
@@ -331,21 +329,19 @@ if (!response.ok) {
 throw new Error(`HTTP error! status: ${response.status}`);
 }
 
-const rows = await response.json(); // Чистый массив объектов
+const rows = await response.json();
 console.log('👥 Получено сотрудников:', rows);
 
 if (Array.isArray(rows) && rows.length > 0) {
 employees = rows.map(row => ({
-    id: parseInt(row.employee_id), // Теперь поля доступны напрямую
-    name: row.name,               // Теперь поля доступны напрямую
-    position: row.position,       // Теперь поля доступны напрямую
-    expanded: false
+    id: parseInt(row.employee_id),
+    name: row.name,
+    position: row.position,
+    expanded: false
 }));
 
-// Обновляем nextEmployeeId
 nextEmployeeId = Math.max(...employees.map(e => e.id)) + 1;
 } else {
-// Если база пустая - используем пустой список
 employees = [];
 nextEmployeeId = 101;
 }
@@ -354,7 +350,7 @@ console.log('✅ Сотрудники загружены:', employees);
 
 } catch (error) {
 console.error('❌ Ошибка загрузки сотрудников:', error);
-// При ошибке используем пустой список, чтобы фронтенд не упал
+hideLoader();
 employees = [];
 nextEmployeeId = 101;
 }
@@ -380,7 +376,6 @@ const rows = await response.json();
 
 console.log('📊 Получено анализов:', rows);
 
-// Группируем по employee_id
 analysisData = {};
 
 if (Array.isArray(rows)) {
@@ -404,6 +399,7 @@ console.log('✅ Анализы сгруппированы:', analysisData);
 
 } catch (error) {
 console.error('❌ Ошибка загрузки анализов:', error);
+hideLoader();
 }
 }
 
@@ -526,46 +522,139 @@ function closeAnalysisModal() {
 document.getElementById('analysisModal').style.display = 'none';
 }
 
-// ✅ ЗАГРУЗКА ДИАЛОГОВ
+// ✅ УЛУЧШЕННАЯ ЗАГРУЗКА ДИАЛОГОВ С ПРОГРЕСС-БАРОМ И ТАЙМАУТОМ 15 МИНУТ
 async function handleUpload(event, employeeId) {
 const file = event.target.files[0];
 if (!file) return;
 
 const employee = employees.find(e => e.id === employeeId);
+const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
+    
+console.log('📁 Файл:', file.name, 'Размер:', fileSizeMB, 'МБ');
+
+// Предупреждение для больших файлов
+if (file.size > 1024 * 1024 * 1.5) {
+const confirm = window.confirm(
+    `⚠️ Большой файл (${fileSizeMB} МБ)\n\n` +
+    `Обработка может занять 5-10 минут.\n` +
+    `Не закрывайте эту страницу!\n\n` +
+    `Продолжить загрузку?`
+);
+
+if (!confirm) {
+    event.target.value = '';
+    return;
+}
+}
 
 const formData = new FormData();
 formData.append('file', file);
 formData.append('employeeId', employeeId);
 formData.append('employeeName', employee.name);
 
-showLoader('Загрузка и AI-анализ диалогов...');
+showLoader(`Загрузка файла "${file.name}"<br>(${fileSizeMB} МБ)...<br><br>⏳ Это может занять до 10 минут.<br>Не закрывайте страницу!`);
 
 try {
-const response = await fetch(UPLOAD_DIALOGS_URL, {
-method: 'POST',
-body: formData
+console.log('🚀 Отправляем файл на n8n...');
+console.log('URL:', UPLOAD_DIALOGS_URL);
+
+// Используем XMLHttpRequest для отслеживания прогресса
+const xhr = new XMLHttpRequest();
+
+const uploadPromise = new Promise((resolve, reject) => {
+    
+    // Прогресс загрузки
+    xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            console.log(`📤 Загружено: ${percent}%`);
+            document.getElementById('loaderText').innerHTML = 
+                `Загрузка файла: ${percent}%<br><br>⏳ Не закрывайте страницу!`;
+        }
+    });
+    
+    // Завершение загрузки
+    xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+                const result = JSON.parse(xhr.responseText);
+                resolve(result);
+            } catch (e) {
+                resolve({ success: true, message: xhr.responseText });
+            }
+        } else {
+            reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText}`));
+        }
+    });
+    
+    // Ошибка сети
+    xhr.addEventListener('error', () => {
+        reject(new Error('Ошибка сети. Проверьте подключение к интернету.'));
+    });
+    
+    // Таймаут (15 минут)
+    xhr.timeout = 900000;
+    xhr.addEventListener('timeout', () => {
+        reject(new Error('Таймаут загрузки (15 минут). Попробуйте файл меньшего размера или разделите на части.'));
+    });
+    
+    // Отправляем запрос
+    xhr.open('POST', UPLOAD_DIALOGS_URL);
+    xhr.send(formData);
 });
 
-if (!response.ok) {
-throw new Error(`HTTP error! status: ${response.status}`);
-}
+// Меняем текст после загрузки файла (через 3 секунды)
+setTimeout(() => {
+    if (xhr.readyState === 4) return;
+    document.getElementById('loaderText').innerHTML = 
+        `Файл загружен!<br><br>🤖 AI анализирует диалоги...<br>⏳ Это может занять несколько минут.`;
+}, 3000);
 
-const result = await response.json();
+const result = await uploadPromise;
+
+console.log('✅ Результат:', result);
 
 hideLoader();
 
-alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Проверьте N8N'}`);
+alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Данные обрабатываются'}`);
 
-// ⚡ АВТОМАТИЧЕСКИ ОБНОВЛЯЕМ АНАЛИЗЫ
+// Обновляем данные через 3 секунды
 setTimeout(async () => {
-await loadAnalysisData();
-render();
-}, 2000);
+    showLoader('Загрузка обновленных данных...');
+    await loadAnalysisData();
+    render();
+    hideLoader();
+}, 3000);
 
 } catch (error) {
 hideLoader();
-alert(`❌ Ошибка при загрузке файла:\n${error.message}\n\nПроверьте подключение и попробуйте снова.`);
-console.error('💥 Upload error:', error);
+
+console.error('💥 Ошибка:', error);
+
+if (error.message.includes('Таймаут')) {
+    alert(
+        `⏱️ ${error.message}\n\n` +
+        `Файл: ${file.name}\n` +
+        `Размер: ${fileSizeMB} МБ\n\n` +
+        `💡 Попробуйте:\n` +
+        `• Разделить файл на меньшие части\n` +
+        `• Загрузить меньше диалогов за раз\n` +
+        `• Проверить выполнение в n8n (возможно обработка идет в фоне)`
+    );
+} else if (error.message.includes('Ошибка сети')) {
+    alert(
+        `❌ ${error.message}\n\n` +
+        `Проверьте:\n` +
+        `• Подключение к интернету\n` +
+        `• Доступность сервера n8n\n` +
+        `• Консоль браузера (F12) для деталей`
+    );
+} else {
+    alert(
+        `❌ Ошибка при загрузке:\n\n${error.message}\n\n` +
+        `Откройте консоль (F12) для подробностей.`
+    );
+}
 }
 
 event.target.value = '';
@@ -579,13 +668,9 @@ const newName = prompt("Введите новое имя сотрудника:",
 if (newName && newName.trim() !== "" && newName.trim() !== currentName) {
 employee.name = newName.trim();
 render();
-
-// Синхронизируем с БД
 await syncEmployeesToDB();
 }
 }
-
-// ❌ УДАЛЕНА ФУНКЦИЯ deleteEmployee
 
 function openAddEmployeeModal() {
 document.getElementById('addEmployeeModal').style.display = 'block';
@@ -617,7 +702,6 @@ employees.push(newEmployee);
 closeAddEmployeeModal();
 render();
 
-// Синхронизируем с БД
 await syncEmployeesToDB();
 }
 
@@ -704,7 +788,7 @@ closeAnalysisModal();
 }
 }
 
-// ✅ ИНИЦИАЛИЗАЦИЯ: Загружаем сотрудников и анализы
+// ✅ ИНИЦИАЛИЗАЦИЯ
 async function init() {
 showLoader('Загрузка данных из базы...');
 
@@ -720,5 +804,3 @@ init();
 
 </body>
 </html>
-
-
