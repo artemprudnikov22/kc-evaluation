@@ -441,13 +441,23 @@ console.error('❌ Ошибка синхронизации:', error);
 }
 }
 
-// ✅ РАСЧЕТ СРЕДНЕГО ИЭР
+// ✅ РАСЧЕТ СРЕДНЕГО ИЭР (игнорируем пустые/битые батчи)
 function calculateAverageIER(employeeId) {
-const analyses = analysisData[employeeId] || [];
-if (analyses.length === 0) return 0;
+const allAnalyses = analysisData[employeeId] || [];
+// берём только валидные батчи
+const validAnalyses = allAnalyses.filter(a => {
+const ier = parseFloat(a.ierCoefficient);
+return a.dialogsCount > 0 && !isNaN(ier) && ier > 0;
+});
 
-const sum = analyses.reduce((acc, a) => acc + parseFloat(a.ierCoefficient || 0), 0);
-return (sum / analyses.length).toFixed(2);
+if (validAnalyses.length === 0) return 0;
+
+const sum = validAnalyses.reduce(
+(acc, a) => acc + parseFloat(a.ierCoefficient),
+0
+);
+
+return (sum / validAnalyses.length).toFixed(2);
 }
 
 // ✅ ПОЛУЧИТЬ ПОСЛЕДНИЙ ИЭР
@@ -591,47 +601,41 @@ const xhr = new XMLHttpRequest();
 const startTime = Date.now();
 
 const uploadPromise = new Promise((resolve, reject) => {
-    
-    // Событие: Соединение установлено
     xhr.addEventListener('loadstart', () => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         console.log(`🔌 [${elapsed}с] Соединение установлено, начинается передача данных...`);
     });
-    
-    // Событие: Прогресс загрузки
+
     xhr.upload.addEventListener('progress', (e) => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         if (e.lengthComputable) {
             const percent = Math.round((e.loaded / e.total) * 100);
             const loadedMB = (e.loaded / 1024 / 1024).toFixed(2);
             const totalMB = (e.total / 1024 / 1024).toFixed(2);
-            const speed = (e.loaded / 1024 / (Date.now() - startTime)).toFixed(2);
-            
-            console.log(`📤 [${elapsed}с] Загружено: ${percent}% (${loadedMB} / ${totalMB} МБ) | Скорость: ${speed} КБ/с`);
-            
-            document.getElementById('loaderText').innerHTML = 
+
+            console.log(`📤 [${elapsed}с] Загружено: ${percent}% (${loadedMB} / ${totalMB} МБ)`);
+
+            document.getElementById('loaderText').innerHTML =
                 `Загрузка файла: ${percent}%<br>(${loadedMB} / ${totalMB} МБ)<br><br>⏳ Не закрывайте страницу!`;
         } else {
             console.log(`📤 [${elapsed}с] Загрузка идет... (размер неопределен)`);
         }
     });
-    
-    // Событие: Загрузка завершена, ожидаем ответ
+
     xhr.upload.addEventListener('load', () => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         console.log(`✅ [${elapsed}с] Файл загружен на сервер, ожидаем ответа...`);
-        document.getElementById('loaderText').innerHTML = 
+        document.getElementById('loaderText').innerHTML =
             `Файл загружен!<br><br>🤖 AI анализирует диалоги...<br>⏳ Это может занять несколько минут.`;
     });
-    
-    // Событие: Получен ответ от сервера
+
     xhr.addEventListener('load', () => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         console.log(`📥 [${elapsed}с] Ответ получен от сервера`);
         console.log('📊 HTTP Статус:', xhr.status, xhr.statusText);
         console.log('📝 Заголовки ответа:', xhr.getAllResponseHeaders());
         console.log('📄 Тело ответа (первые 500 символов):', xhr.responseText.substring(0, 500));
-        
+
         if (xhr.status >= 200 && xhr.status < 300) {
             try {
                 const result = JSON.parse(xhr.responseText);
@@ -646,8 +650,7 @@ const uploadPromise = new Promise((resolve, reject) => {
             reject(new Error(`HTTP ${xhr.status}: ${xhr.responseText.substring(0, 200)}`));
         }
     });
-    
-    // Событие: Ошибка сети
+
     xhr.addEventListener('error', (e) => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         console.error(`💥 [${elapsed}с] ОШИБКА СЕТИ!`);
@@ -655,29 +658,26 @@ const uploadPromise = new Promise((resolve, reject) => {
         console.error('ReadyState:', xhr.readyState);
         console.error('Status:', xhr.status);
         console.error('StatusText:', xhr.statusText);
-        
+
         reject(new Error('Ошибка сети. Проверьте: 1) Подключение к интернету 2) Доступность n8n.decartus.team 3) Консоль для деталей'));
     });
-    
-    // Событие: Таймаут
+
     xhr.timeout = 900000; // 15 минут
     xhr.addEventListener('timeout', () => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         console.error(`⏱️ [${elapsed}с] ТАЙМАУТ! Запрос превысил 15 минут`);
         reject(new Error('Таймаут загрузки (15 минут). Попробуйте файл меньшего размера.'));
     });
-    
-    // Событие: Запрос отменен
+
     xhr.addEventListener('abort', () => {
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
         console.error(`🚫 [${elapsed}с] Запрос отменен пользователем или браузером`);
         reject(new Error('Загрузка отменена'));
     });
-    
-    // Отправляем запрос
+
     console.log('📡 Открываем POST соединение с:', UPLOAD_DIALOGS_URL);
     xhr.open('POST', UPLOAD_DIALOGS_URL);
-    
+
     console.log('📡 Отправляем FormData...');
     xhr.send(formData);
     console.log('✅ send() выполнен, ожидаем событий...');
@@ -695,7 +695,6 @@ hideLoader();
 
 alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nОбработано диалогов: ${result.total || result.processed || 'Данные обрабатываются'}\nВремя: ${totalTime}с`);
 
-// Обновляем данные через 3 секунды
 setTimeout(async () => {
     showLoader('Загрузка обновленных данных...');
     await loadAnalysisData();
