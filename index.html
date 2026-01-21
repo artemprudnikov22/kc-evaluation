@@ -1285,19 +1285,22 @@ class Utils {
 
     aggregated[employeeId] = groups.map((group, index) => {
       let totalDialogs = 0, totalComplexity = 0, totalIER = 0;
+
       group.forEach(a => {
-        const dialogs = parseInt(a.dialogs_count, 10) || 0;
+        const dialogs = parseInt(a.dialogscount, 10) || 0;
         totalDialogs += dialogs;
-        totalComplexity += parseFloat(a.sum_complexity || 0);
+        totalComplexity += parseFloat(a.sumcomplexity || 0);
         totalIER += parseFloat(a.sum_ier || 0);
       });
 
-      const avgComplexity = totalDialogs > 0 ? Number(totalComplexity / totalDialogs).toFixed(2) : '0.00';
-      const avgIER = totalDialogs > 0 ? Number(totalIER / totalDialogs).toFixed(2) : '0.00';
+      const avgComplexity =
+        totalDialogs > 0 ? Number(totalComplexity / totalDialogs).toFixed(2) : '0.00';
+      const avgIER =
+        totalDialogs > 0 ? Number(totalIER / totalDialogs).toFixed(2) : '0.00';
 
-      const startTime = new Date(group[0].analyzed_at);
-      const endTime = new Date(group[group.length - 1].analyzed_at);
-      const dialogIds = group.map(a => a.dialog_ids).filter(id => id).join(', ');
+      const startTime = new Date(group[0].analyzedat);
+      const endTime = new Date(group[group.length - 1].analyzedat);
+      const dialogIds = group.map(a => a.dialogids).filter(id => id).join(', ');
 
       return {
         id: `agg-${employeeId}-${index}-${Date.now()}`,
@@ -1314,10 +1317,10 @@ class Utils {
           ...batch,
           parsed_ier: parseFloat(batch.ier_coefficient || 0),
           parsed_complexity: parseFloat(batch.complexity_level || 0),
-          parsed_dialogs: parseInt(batch.dialogs_count || 0)
+          parsed_dialogs: parseInt(batch.dialogscount || 0)
         })),
-        formatted_date: Utils.formatDate(group[0].analyzed_at),
-        formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
+        formatted_date: Utils.formatDate(group[0].analyzedat),
+        formatted_time: `${Utils.formatTime(group[0].analyzedat)} - ${Utils.formatTime(group[group.length - 1].analyzedat)}`
       };
     });
   }
@@ -1329,7 +1332,7 @@ static calculateAverageIER(aggregatedAnalyses) {
 
   const validIERs = aggregatedAnalyses
     .map(a => parseFloat(a.avg_ier))
-    .filter(ier => !isNaN(ier) && ier > 0);
+    .filter(ier => !isNaN(ier)); // убрал ier > 0, чтобы 1.5 не отбрасывался
 
   if (validIERs.length === 0) return 0;
 
@@ -2106,6 +2109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
