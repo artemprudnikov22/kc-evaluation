@@ -578,7 +578,16 @@ body {
   width: 90%;
   box-shadow: var(--shadow-xl);
   animation: slideInRight var(--transition-base);
-  overflow: hidden;
+  overflow: hidden; /* оставить */
+}
+
+.analysis-modal-content {  /* ← ДОБАВЬ ЭТОТ БЛОК полностью */
+  max-width: 800px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-xl);  /* ← КЛЮЧЕВОЕ */
+  overflow: hidden;                 /* ← КЛЮЧЕВОЕ */
 }
 
 .modal-header {
@@ -708,7 +717,10 @@ body {
 
 .analysis-header-info {
   padding: 24px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 0.5%, var(--light) 5%);
+  background: linear-gradient(135deg, 
+    var(--primary) 0%, 
+    var(--primary-light) 40%, 
+    var(--light) 100%);  /* ← плавно уходит в белый, без резкого среза */
   border-bottom: 1px solid var(--gray-200);
 }
 
@@ -1246,8 +1258,8 @@ class Utils {
             parsed_complexity: parseFloat(batch.complexity_level) || 0,
             parsed_dialogs: parseInt(batch.dialogs_count) || 0
           })),
-          formatted_date: Utils.formatDate(group[0].analyzed_at),
-          formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
+          formatted_date: Utils.formatDate(group[group.length - 1].analyzed_at),
+formatted_time: Utils.formatTime(group[group.length - 1].analyzed_at)
         };
       });
     }
@@ -1967,6 +1979,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
