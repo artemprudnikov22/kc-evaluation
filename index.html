@@ -1280,64 +1280,62 @@ class Utils {
   const aggregated = {};
   for (const [employeeId, analyses] of Object.entries(analysisData)) {
     if (!analyses || analyses.length === 0) continue;
-    
+
     const groups = Utils.groupAnalysesByTimeWindow(analyses);
-    
+
     aggregated[employeeId] = groups.map((group, index) => {
-      // ← ФИКС: Взвешенные суммы по диалогам
       let totalDialogs = 0, totalComplexity = 0, totalIER = 0;
       group.forEach(a => {
-        const dialogs = parseInt(a.dialogscount, 10) || 0;
+        const dialogs = parseInt(a.dialogs_count, 10) || 0;
         totalDialogs += dialogs;
-        totalComplexity += parseFloat(a.sumcomplexity || 0);  // Уже сумма уровней по диалогам в батче
-        totalIER += parseFloat(a.sum_ier || 0);  // Уже сумма ИЭР по диалогам
+        totalComplexity += parseFloat(a.sum_complexity || 0);
+        totalIER += parseFloat(a.sum_ier || 0);
       });
-      
-      const avgComplexity = totalDialogs > 0 ? (totalComplexity / totalDialogs).toFixed(2) : 0;
-      const avgIER = group.length > 0 ? (totalIER / totalDialogs).toFixed(2) : 0;  // ← ВЗВЕШЕННО!
-      
-      // Остальное без изменений...
-      const startTime = new Date(group[0].analyzedat);
-      const endTime = new Date(group[group.length - 1].analyzedat);
-      const dialogIds = group.map(a => a.dialogids).filter(id => id).join(', ');
-      
+
+      const avgComplexity = totalDialogs > 0 ? Number(totalComplexity / totalDialogs).toFixed(2) : '0.00';
+      const avgIER = totalDialogs > 0 ? Number(totalIER / totalDialogs).toFixed(2) : '0.00';
+
+      const startTime = new Date(group[0].analyzed_at);
+      const endTime = new Date(group[group.length - 1].analyzed_at);
+      const dialogIds = group.map(a => a.dialog_ids).filter(id => id).join(', ');
+
       return {
         id: `agg-${employeeId}-${index}-${Date.now()}`,
-        employeeid: parseInt(employeeId),
-        starttime: startTime,
-        endtime: endTime,
-        totaldialogs: totalDialogs,
-        batchcount: group.length,
-        avgcomplexity: avgComplexity,
-        avgier: avgIER,
-        totalier: totalIER.toFixed(2),
-        dialogids: dialogIds,
+        employee_id: parseInt(employeeId, 10),
+        start_time: startTime,
+        end_time: endTime,
+        total_dialogs: totalDialogs,
+        batch_count: group.length,
+        avg_complexity: avgComplexity,
+        avg_ier: avgIER,
+        total_ier: Number(totalIER).toFixed(2),
+        dialog_ids: dialogIds,
         batches: group.map(batch => ({
           ...batch,
-          parsedier: parseFloat(batch.ier_coefficient || 0),
-          parsedcomplexity: parseFloat(batch.complexity_level || 0),
-          parseddialogs: parseInt(batch.dialogscount || 0)
+          parsed_ier: parseFloat(batch.ier_coefficient || 0),
+          parsed_complexity: parseFloat(batch.complexity_level || 0),
+          parsed_dialogs: parseInt(batch.dialogs_count || 0)
         })),
-        formatteddate: Utils.formatDate(group[0].analyzedat),
-        formattedtime: `${Utils.formatTime(group[0].analyzedat)} - ${Utils.formatTime(group[group.length - 1].analyzedat)}`
+        formatted_date: Utils.formatDate(group[0].analyzed_at),
+        formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
       };
     });
   }
   return aggregated;
 }
 
-  static calculateAverageIER(aggregatedAnalyses) {
-    if (!aggregatedAnalyses || aggregatedAnalyses.length === 0) return 0;
-    
-    const validIERs = aggregatedAnalyses
-      .map(a => parseFloat(a.avg_ier))
-      .filter(ier => !isNaN(ier) && ier > 0);
-      
-    if (validIERs.length === 0) return 0;
-    
-    const sum = validIERs.reduce((acc, ier) => acc + ier, 0);
-    return (sum / validIERs.length).toFixed(2);
-  }
+static calculateAverageIER(aggregatedAnalyses) {
+  if (!aggregatedAnalyses || aggregatedAnalyses.length === 0) return 0;
+
+  const validIERs = aggregatedAnalyses
+    .map(a => parseFloat(a.avg_ier))
+    .filter(ier => !isNaN(ier) && ier > 0);
+
+  if (validIERs.length === 0) return 0;
+
+  const sum = validIERs.reduce((acc, ier) => acc + ier, 0);
+  return Number(sum / validIERs.length).toFixed(2);
+}
 
   static calculateComplexityDistribution(analyses) {
     const distribution = { 1: 0, 2: 0, 3: 0, 4: 0 };
@@ -2108,6 +2106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
