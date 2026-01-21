@@ -1338,37 +1338,37 @@ class Utils {
     const sum = validIERs.reduce((acc, ier) => acc + ier, 0);
     return (sum / validIERs.length).toFixed(2);
   }
-}
 
-static calculateComplexityDistribution(analyses) {
-  const distribution = { 1: 0, 2: 0, 3: 0, 4: 0 };
-  
-  if (!analyses || analyses.length === 0) return distribution;
-  
-  analyses.forEach(analysis => {
-    if (analysis.complexity_level) {
-      const complexity = parseFloat(analysis.complexity_level);
-      if (complexity >= 1 && complexity <= 4) {
-        const dialogsCount = parseInt(analysis.dialogs_count) || 0;
-        // Если сложность - целое число, добавляем к соответствующему уровню
-        if (Number.isInteger(complexity)) {
-          distribution[complexity] += dialogsCount;
-        } else {
-          // Если сложность дробная, распределяем по ближайшим уровням
-          const floor = Math.floor(complexity);
-          const ceil = Math.ceil(complexity);
-          const ratio = complexity - floor;
-          
-          distribution[floor] += Math.round(dialogsCount * (1 - ratio));
-          if (ceil <= 4) {
-            distribution[ceil] += Math.round(dialogsCount * ratio);
+  static calculateComplexityDistribution(analyses) {
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    
+    if (!analyses || analyses.length === 0) return distribution;
+    
+    analyses.forEach(analysis => {
+      if (analysis.complexity_level) {
+        const complexity = parseFloat(analysis.complexity_level);
+        if (complexity >= 1 && complexity <= 4) {
+          const dialogsCount = parseInt(analysis.dialogs_count) || 0;
+          // Если сложность - целое число, добавляем к соответствующему уровню
+          if (Number.isInteger(complexity)) {
+            distribution[complexity] += dialogsCount;
+          } else {
+            // Если сложность дробная, распределяем по ближайшим уровням
+            const floor = Math.floor(complexity);
+            const ceil = Math.ceil(complexity);
+            const ratio = complexity - floor;
+            
+            distribution[floor] += Math.round(dialogsCount * (1 - ratio));
+            if (ceil <= 4) {
+              distribution[ceil] += Math.round(dialogsCount * ratio);
+            }
           }
         }
       }
-    }
-  });
-  
-  return distribution;
+    });
+    
+    return distribution;
+  }
 }
 // 
 // КОМПОНЕНТЫ UI
@@ -2108,6 +2108,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
