@@ -1025,7 +1025,78 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray-500);
 }
-`;
+
+/* Распределение по сложности */
+.complexity-distribution {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.complexity-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  min-width: 40px;
+  transition: all var(--transition-fast);
+}
+
+.complexity-level:hover {
+  transform: translateY(-2px);
+}
+
+.level-1 {
+  background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+  color: white;
+}
+
+.level-2 {
+  background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
+  color: white;
+}
+
+.level-3 {
+  background: linear-gradient(135deg, #FF9800 0%, #FFB74D 100%);
+  color: white;
+}
+
+.level-4 {
+  background: linear-gradient(135deg, #F44336 0%, #E57373 100%);
+  color: white;
+}
+
+.complexity-label {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 2px;
+  opacity: 0.9;
+}
+
+.complexity-count {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Адаптивность для распределения сложности */
+@media (max-width: 768px) {
+  .complexity-distribution {
+    gap: 4px;
+  }
+  
+  .complexity-level {
+    padding: 4px 6px;
+    min-width: 36px;
+  }
+  
+  .complexity-count {
+    font-size: 12px;
+  }
+}
+`;  //
 
 // ============================================================================
 // СОСТОЯНИЕ ПРИЛОЖЕНИЯ
@@ -1269,6 +1340,38 @@ class Utils {
   }
 }
 
+  // В классе Utils добавьте этот метод после существующих методов:
+static calculateComplexityDistribution(analyses) {
+  const distribution = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  
+  if (!analyses || analyses.length === 0) return distribution;
+  
+  analyses.forEach(analysis => {
+    if (analysis.complexity_level) {
+      const complexity = parseFloat(analysis.complexity_level);
+      if (complexity >= 1 && complexity <= 4) {
+        const dialogsCount = parseInt(analysis.dialogs_count) || 0;
+        // Если сложность - целое число, добавляем к соответствующему уровню
+        if (Number.isInteger(complexity)) {
+          distribution[complexity] += dialogsCount;
+        } else {
+          // Если сложность дробная, распределяем по ближайшим уровням
+          const floor = Math.floor(complexity);
+          const ceil = Math.ceil(complexity);
+          const ratio = complexity - floor;
+          
+          distribution[floor] += Math.round(dialogsCount * (1 - ratio));
+          if (ceil <= 4) {
+            distribution[ceil] += Math.round(dialogsCount * ratio);
+          }
+        }
+      }
+    }
+  });
+  
+  return distribution;
+}
+
 // ============================================================================
 // КОМПОНЕНТЫ UI
 // ============================================================================
@@ -1365,6 +1468,10 @@ class EmployeeCardComponent {
     const lastDate = aggregatedAnalyses.length > 0 ? aggregatedAnalyses[aggregatedAnalyses.length - 1].formatted_date : '—';
     const totalDialogs = aggregatedAnalyses.reduce((sum, a) => sum + a.total_dialogs, 0);
     
+    // Получаем все анализы сотрудника для подсчета распределения
+    const allAnalyses = app.state.getAnalyses(employee.id);
+    const complexityDistribution = Utils.calculateComplexityDistribution(allAnalyses);
+    
     return `
       <div class="employee-card" data-employee-id="${employee.id}">
         <div class="employee-header">
@@ -1425,6 +1532,33 @@ class EmployeeCardComponent {
             </div>
             <div class="stat-card-value">${totalDialogs}</div>
             <div class="stat-card-subtitle">Всего обработано</div>
+          </div>
+          
+          <!-- Новая карточка для распределения сложности -->
+          <div class="stat-card">
+            <div class="stat-card-title">
+              <i class="fas fa-signal"></i>
+              Распределение по сложности
+            </div>
+            <div class="complexity-distribution">
+              <div class="complexity-level level-1" title="Уровень 1 (Простые)">
+                <span class="complexity-label">1</span>
+                <span class="complexity-count">${complexityDistribution[1]}</span>
+              </div>
+              <div class="complexity-level level-2" title="Уровень 2 (Средние)">
+                <span class="complexity-label">2</span>
+                <span class="complexity-count">${complexityDistribution[2]}</span>
+              </div>
+              <div class="complexity-level level-3" title="Уровень 3 (Сложные)">
+                <span class="complexity-label">3</span>
+                <span class="complexity-count">${complexityDistribution[3]}</span>
+              </div>
+              <div class="complexity-level level-4" title="Уровень 4 (Очень сложные)">
+                <span class="complexity-label">4</span>
+                <span class="complexity-count">${complexityDistribution[4]}</span>
+              </div>
+            </div>
+            <div class="stat-card-subtitle">Уровни сложности диалогов</div>
           </div>
         </div>
         
@@ -1782,9 +1916,9 @@ class App {
     }
     
     const cards = this.state.employees.map(employee => {
-      const aggregatedAnalyses = this.state.getAggregatedAnalyses(employee.id);
-      return EmployeeCardComponent.render(employee, aggregatedAnalyses, this);
-    }).join('');
+  const aggregatedAnalyses = this.state.getAggregatedAnalyses(employee.id);
+  return EmployeeCardComponent.render(employee, aggregatedAnalyses, this);
+}).join('');
     
     contentContainer.innerHTML = cards;
   }
@@ -1976,6 +2110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
