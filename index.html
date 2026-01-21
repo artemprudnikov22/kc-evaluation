@@ -1277,54 +1277,68 @@ class Utils {
   }
 
   static createAggregatedAnalyses(analysisData) {
-    const aggregated = {};
+  const aggregated = {};
+  
+  for (const [employeeId, analyses] of Object.entries(analysisData)) {
+    if (!analyses || analyses.length === 0) continue;
     
-    for (const [employeeId, analyses] of Object.entries(analysisData)) {
-      if (!analyses || analyses.length === 0) continue;
+    const groups = Utils.groupAnalysesByTimeWindow(analyses);
+    
+    aggregated[employeeId] = groups.map((group, index) => {
+      // Взвешенные суммы с учетом количества диалогов
+      let totalWeightedComplexity = 0;
+      let totalWeightedIER = 0;
+      let totalDialogs = 0;
       
-      const groups = Utils.groupAnalysesByTimeWindow(analyses);
-      
-      aggregated[employeeId] = groups.map((group, index) => {
-        const totalDialogs = group.reduce((sum, a) => sum + (parseInt(a.dialogs_count) || 0), 0);
-        const totalComplexity = group.reduce((sum, a) => sum + (parseFloat(a.sum_complexity) || 0), 0);
-        const totalIER = group.reduce((sum, a) => sum + (parseFloat(a.ier_coefficient) || 0), 0);
+      group.forEach(batch => {
+        const dialogsCount = parseInt(batch.dialogs_count) || 0;
+        const complexity = parseFloat(batch.complexity_level) || 0;
+        const ier = parseFloat(batch.ier_coefficient) || 0;
         
-        const avgComplexity = totalDialogs > 0 ? (totalComplexity / totalDialogs).toFixed(2) : '0';
-        const avgIER = group.length > 0 ? (totalIER / group.length).toFixed(2) : '0';
-        
-        const startTime = new Date(group[0].analyzed_at);
-        const endTime = new Date(group[group.length - 1].analyzed_at);
-        
-        const dialogIds = group
-          .map(a => a.dialog_ids || '')
-          .filter(id => id)
-          .join(', ');
-        
-        return {
-          id: `agg_${employeeId}_${index}_${Date.now()}`,
-          employee_id: parseInt(employeeId),
-          start_time: startTime,
-          end_time: endTime,
-          total_dialogs: totalDialogs,
-          batch_count: group.length,
-          avg_complexity: avgComplexity,
-          avg_ier: avgIER,
-          total_ier: totalIER,
-          dialog_ids: dialogIds,
-          batches: group.map(batch => ({
-            ...batch,
-            parsed_ier: parseFloat(batch.ier_coefficient) || 0,
-            parsed_complexity: parseFloat(batch.complexity_level) || 0,
-            parsed_dialogs: parseInt(batch.dialogs_count) || 0
-          })),
-          formatted_date: Utils.formatDate(group[0].analyzed_at),
-          formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
-        };
+        totalWeightedComplexity += complexity * dialogsCount;
+        totalWeightedIER += ier * dialogsCount;
+        totalDialogs += dialogsCount;
       });
-    }
-    
-    return aggregated;
+      
+      // Взвешенное среднее (учитываем количество диалогов в каждом батче)
+      const avgComplexity = totalDialogs > 0 ? 
+        (totalWeightedComplexity / totalDialogs).toFixed(2) : '0';
+      const avgIER = totalDialogs > 0 ? 
+        (totalWeightedIER / totalDialogs).toFixed(2) : '0';
+      
+      const startTime = new Date(group[0].analyzed_at);
+      const endTime = new Date(group[group.length - 1].analyzed_at);
+      
+      const dialogIds = group
+        .map(a => a.dialog_ids || '')
+        .filter(id => id)
+        .join(', ');
+      
+      return {
+        id: `agg_${employeeId}_${index}_${Date.now()}`,
+        employee_id: parseInt(employeeId),
+        start_time: startTime,
+        end_time: endTime,
+        total_dialogs: totalDialogs,
+        batch_count: group.length,
+        avg_complexity: avgComplexity,
+        avg_ier: avgIER,
+        total_ier: group.reduce((sum, a) => sum + (parseFloat(a.ier_coefficient) || 0), 0),
+        dialog_ids: dialogIds,
+        batches: group.map(batch => ({
+          ...batch,
+          parsed_ier: parseFloat(batch.ier_coefficient) || 0,
+          parsed_complexity: parseFloat(batch.complexity_level) || 0,
+          parsed_dialogs: parseInt(batch.dialogs_count) || 0
+        })),
+        formatted_date: Utils.formatDate(group[0].analyzed_at),
+        formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
+      };
+    });
   }
+  
+  return aggregated;
+}
 
   static calculateAverageIER(aggregatedAnalyses) {
     if (!aggregatedAnalyses || aggregatedAnalyses.length === 0) return 0;
@@ -2108,7 +2122,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
 
 
 
