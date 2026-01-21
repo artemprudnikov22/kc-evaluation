@@ -1955,6 +1955,15 @@ class App {
   }
 }
 
+// Фикс всех крестиков модалок
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('close-btn')) {
+    const modal = e.target.closest('.modal');
+    if (modal) {
+      modal.style.display = 'none';
+    }
+  }
+});  
 // ============================================================================
 // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // ============================================================================
@@ -1967,6 +1976,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
