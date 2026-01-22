@@ -1273,27 +1273,24 @@ class Utils {
     aggregated[employeeId] = groups.map((group, index) => {
       // Взвешенные суммы с учетом количества диалогов
       let totalWeightedComplexity = 0;
-      let totalSumIER = 0; // Теперь это СУММА ИЭР
+      let totalWeightedIER = 0;
       let totalDialogs = 0;
       
       group.forEach(batch => {
         const dialogsCount = parseInt(batch.dialogs_count) || 0;
         const complexity = parseFloat(batch.complexity_level) || 0;
-        const ierSum = parseFloat(batch.ier_coefficient) || 0; // Это СУММА ИЭР!
+        const ier = parseFloat(batch.ier_coefficient) || 0;
         
-        // complexity уже среднее, поэтому умножаем на количество диалогов
         totalWeightedComplexity += complexity * dialogsCount;
-        totalSumIER += ierSum; // Просто суммируем суммы ИЭР
+        totalWeightedIER += ier * dialogsCount;
         totalDialogs += dialogsCount;
       });
       
-      // Взвешенное среднее сложности
+      // Взвешенное среднее (учитываем количество диалогов в каждом батче)
       const avgComplexity = totalDialogs > 0 ? 
         (totalWeightedComplexity / totalDialogs).toFixed(2) : '0';
-      
-      // СРЕДНИЙ ИЭР = общая сумма ИЭР / общее количество диалогов
       const avgIER = totalDialogs > 0 ? 
-        (totalSumIER / totalDialogs).toFixed(2) : '0';
+        (totalWeightedIER / totalDialogs).toFixed(2) : '0';
       
       const startTime = new Date(group[0].analyzed_at);
       const endTime = new Date(group[group.length - 1].analyzed_at);
@@ -1312,23 +1309,19 @@ class Utils {
         batch_count: group.length,
         avg_complexity: avgComplexity,
         avg_ier: avgIER,
-        total_ier: totalSumIER,
+        total_ier: totalWeightedIER,
         dialog_ids: dialogIds,
         batches: group.map(batch => {
           const dialogsCount = parseInt(batch.dialogs_count) || 1;
-          const ierSum = parseFloat(batch.ier_coefficient) || 0;
-          
-          // СРЕДНИЙ ИЭР ДЛЯ БАТЧА = сумма ИЭР / количество диалогов
-          const batchAvgIER = dialogsCount > 0 ? 
-            (ierSum / dialogsCount).toFixed(2) : '0';
+          const ier = parseFloat(batch.ier_coefficient) || 0;
+          const batchAvgIER = dialogsCount > 0 ? (ier * dialogsCount) / dialogsCount : ier;
           
           return {
             ...batch,
-            parsed_ier: parseFloat(batch.ier_coefficient) || 0, // Это СУММА
-            parsed_complexity: parseFloat(batch.complexity_level) || 0, // Это СРЕДНЕЕ
+            parsed_ier: parseFloat(batch.ier_coefficient) || 0,
+            parsed_complexity: parseFloat(batch.complexity_level) || 0,
             parsed_dialogs: parseInt(batch.dialogs_count) || 0,
-            avg_ier: batchAvgIER, // Добавляем РАССЧИТАННОЕ среднее ИЭР
-            ier_sum: ierSum // Оставляем исходную сумму для справки
+            avg_ier: batchAvgIER.toFixed(2) // Добавляем средний ИЭР для батча
           };
         }),
         formatted_date: Utils.formatDate(group[0].analyzed_at),
@@ -1675,40 +1668,60 @@ class AnalysisModalComponent {
   }
 
   static renderBatch(batch, index, employeeId) {
-  const batchTime = batch.analyzed_at ? Utils.formatTime(batch.analyzed_at) : 'Время не указано';
-  
-  return `
-    <div class="batch-item" id="batch-${employeeId}-${index}">
-      <div class="batch-header" onclick="app.handlers.toggleBatchDetails(${employeeId}, ${index})">
-        <div class="batch-info">
-          <div class="batch-number">${index + 1}</div>
-          <div class="batch-details">
-            Батч от ${batchTime} • ${batch.dialogs_count} диалогов
+    const batchTime = batch.analyzed_at ? Utils.formatTime(batch.analyzed_at) : 'Время не указано';
+    
+    return `
+      <div class="batch-item" id="batch-${employeeId}-${index}">
+        <div class="batch-header" onclick="app.handlers.toggleBatchDetails(${employeeId}, ${index})">
+          <div class="batch-info">
+            <div class="batch-number">${index + 1}</div>
+            <div class="batch-details">
+              Батч от ${batchTime} • ${batch.dialogs_count} диалогов
+            </div>
+          </div>
+          <div class="batch-stats">
+            <div class="batch-stat">
+              <i class="fas fa-chart-line"></i>
+              <span>ИЭР: ${batch.ier_coefficient}</span>
+            </div>
+            <div class="batch-stat">
+              <i class="fas fa-layer-group"></i>
+              <span>Сложность: ${batch.complexity_level}</span>
+            </div>
+          </div>
+          <div class="batch-arrow">
+            <i class="fas fa-chevron-down"></i>
           </div>
         </div>
-        <div class="batch-stats">
-          <div class="batch-stat">
-            <i class="fas fa-chart-line"></i>
-            <span>ИЭР: ${batch.avg_ier || batch.ier_coefficient}</span>
+        <div class="batch-content">
+          <div class="batch-analysis">
+            <h4><i class="fas fa-chart-bar"></i> Статистика батча</h4>
+            <div class="batch-stats-grid">
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.dialogs_count}</div>
+                <div class="batch-stat-label">Диалогов</div>
+              </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.ier_coefficient}</div>
+                <div class="batch-stat-label">ИЭР</div>
+              </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.complexity_level}</div>
+                <div class="batch-stat-label">Сложность</div>
+              </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.parsed_count || 0}</div>
+                <div class="batch-stat-label">Обработано</div>
+              </div>
+            </div>
+            
+            <h4><i class="fas fa-comment-alt"></i> Обоснование</h4>
+            <div class="batch-justification">${batch.justification || 'Обоснование отсутствует'}</div>
           </div>
-          <div class="batch-stat">
-            <i class="fas fa-layer-group"></i>
-            <span>Сложность: ${batch.complexity_level}</span>
-          </div>
-        </div>
-        <div class="batch-arrow">
-          <i class="fas fa-chevron-down"></i>
         </div>
       </div>
-      <div class="batch-content">
-        <div class="batch-analysis">
-          <!-- УБРАНА СТАТИСТИКА БАТЧА (дублирует информацию сверху) -->
-          <h4><i class="fas fa-comment-alt"></i> Обоснование</h4>
-          <div class="batch-justification">${batch.justification || 'Обоснование отсутствует'}</div>
-        </div>
-      </div>
-    </div>
-  `;
+    `;
+  }
 }
 
 // ============================================================================
@@ -2106,8 +2119,6 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
-
 
 
 
