@@ -811,6 +811,7 @@ body {
   transform: rotate(180deg);
 }
 
+/* Найти существующий блок: */
 .batch-content {
   padding: 0;
   max-height: 0;
@@ -825,51 +826,23 @@ body {
   border-top-color: var(--gray-200);
 }
 
-.batch-analysis {
-  background: var(--light);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 16px;
+/* ЗАМЕНИТЬ на: */
+.batch-content {
+  padding: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-base);
+  border-top: 1px solid transparent;
 }
 
-.batch-analysis h4 {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.batch-item.expanded .batch-content {
+  max-height: 400px; /* Уменьшили высоту для скролла */
+  padding: 20px;
+  border-top-color: var(--gray-200);
+  overflow-y: auto; /* Добавили скролл */
 }
 
-.batch-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.batch-stat {
-  text-align: center;
-  padding: 12px;
-  background: var(--gray-50);
-  border-radius: var(--radius-md);
-}
-
-.batch-stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 4px;
-}
-
-.batch-stat-label {
-  font-size: 12px;
-  color: var(--gray-600);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
+/* Добавить новый стиль для обоснования: */
 .batch-justification {
   font-size: 14px;
   color: var(--gray-700);
@@ -878,6 +851,8 @@ body {
   background: var(--gray-50);
   border-radius: var(--radius-md);
   border-left: 3px solid var(--accent);
+  max-height: 200px; /* Ограничиваем высоту */
+  overflow-y: auto; /* Добавляем скролл */
 }
 
 .batch-justification strong {
@@ -1232,12 +1207,23 @@ class Utils {
   }
 
   static formatTime(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('ru-RU', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  // Проверяем, что это валидная дата
+  const date = new Date(dateString);
+  
+  // Если дата невалидна, возвращаем исходную строку
+  if (isNaN(date.getTime())) {
+    console.warn('Некорректная дата:', dateString);
+    return dateString; // Возвращаем как есть
   }
+  
+  // Используем UTC время, чтобы избежать смещений
+  return date.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit', // Добавляем секунды для точности
+    timeZone: 'UTC' // Используем UTC, чтобы избежать смещений часовых поясов
+  });
+}
 
   static groupAnalysesByTimeWindow(analyses, timeWindow = CONFIG.AGGREGATION_TIME_WINDOW) {
     if (!analyses || analyses.length === 0) return [];
@@ -1323,16 +1309,27 @@ class Utils {
         batch_count: group.length,
         avg_complexity: avgComplexity,
         avg_ier: avgIER,
-        total_ier: group.reduce((sum, a) => sum + (parseFloat(a.ier_coefficient) || 0), 0),
+        total_ier: totalWeightedIER,
         dialog_ids: dialogIds,
-        batches: group.map(batch => ({
-          ...batch,
-          parsed_ier: parseFloat(batch.ier_coefficient) || 0,
-          parsed_complexity: parseFloat(batch.complexity_level) || 0,
-          parsed_dialogs: parseInt(batch.dialogs_count) || 0
-        })),
+        batches: group.map(batch => {
+          const dialogsCount = parseInt(batch.dialogs_count) || 1;
+          const ier = parseFloat(batch.ier_coefficient) || 0;
+          const batchAvgIER = dialogsCount > 0 ? (ier * dialogsCount) / dialogsCount : ier;
+          
+          return {
+            ...batch,
+            parsed_ier: parseFloat(batch.ier_coefficient) || 0,
+            parsed_complexity: parseFloat(batch.complexity_level) || 0,
+            parsed_dialogs: parseInt(batch.dialogs_count) || 0,
+            avg_ier: batchAvgIER.toFixed(2) // Добавляем средний ИЭР для батча
+          };
+        }),
         formatted_date: Utils.formatDate(group[0].analyzed_at),
-        formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
+        formatted_time: (() => {
+          const startTime = group[0].analyzed_at ? Utils.formatTime(group[0].analyzed_at) : '--:--';
+          const endTime = group[group.length - 1].analyzed_at ? Utils.formatTime(group[group.length - 1].analyzed_at) : '--:--';
+          return `${startTime} - ${endTime}`;
+        })()
       };
     });
   }
@@ -1671,7 +1668,7 @@ class AnalysisModalComponent {
   }
 
   static renderBatch(batch, index, employeeId) {
-    const batchTime = Utils.formatTime(batch.analyzed_at);
+    const batchTime = batch.analyzed_at ? Utils.formatTime(batch.analyzed_at) : 'Время не указано';
     
     return `
       <div class="batch-item" id="batch-${employeeId}-${index}">
@@ -2122,6 +2119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
+
 
 
 
