@@ -866,19 +866,43 @@ body {
   font-size: 14px;
   color: var(--gray-700);
   line-height: 1.6;
-  padding: 12px;
+  padding: 16px;
   background: var(--gray-50);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--accent);
-  max-height: 200px;
+  border-left: 4px solid var(--accent);
+  max-height: 300px;
   overflow-y: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .batch-justification strong {
-  color: var(--dark);
   font-weight: 700;
+  color: var(--primary);
 }
 
+.batch-justification u {
+  text-decoration: underline;
+  font-weight: 600;
+  color: var(--dark);
+  display: inline-block;
+  min-width: 140px;
+}
+
+.batch-justification br {
+  margin-bottom: 4px;
+  display: block;
+  content: "";
+}
+
+/* Стиль для заголовков диалогов */
+.batch-justification > div > strong {
+  display: block;
+  font-size: 15px;
+  margin: 12px 0 8px 0;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--primary-light);
+}
 .behavior-stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1252,6 +1276,26 @@ class Utils {
     });
   }
 
+static markdownToHtml(text) {
+  if (!text) return '';
+  
+  let html = text;
+  
+  // Преобразуем **жирный текст** в <strong>жирный текст</strong>
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // Преобразуем __подчеркнутый текст__ в <u>подчеркнутый текст</u>
+  html = html.replace(/__(.*?)__/g, '<u>$1</u>');
+  
+  // Преобразуем переводы строк в <br>
+  html = html.replace(/\n/g, '<br>');
+  
+  // Преобразуем "**Диалог_X**" в отдельный блок с особым стилем
+  html = html.replace(/(<strong>Диалог_\d+<\/strong>):/g, '<div style="margin-top: 16px; margin-bottom: 8px;"><strong>$1</strong>:</div>');
+  
+  return html;
+}
+
   static formatTime(dateString) {
     const date = new Date(dateString);
     return date.toLocaleTimeString('ru-RU', {
@@ -1340,8 +1384,8 @@ class Utils {
           totalLevel2 += parseInt(batch.level2_count) || 0;
           totalLevel3 += parseInt(batch.level3_count) || 0;
           totalLevel4 += parseInt(batch.level4_count) || 0;
-          totalIncorrectBehavior += parseInt(batch.incorrect_behavior_count) || 0;
-          totalSwearing += parseInt(batch.swearing_count) || 0;
+          totalIncorrectBehavior += parseInt(batch.incorrect_behavior_count) || parseInt(batch.parsed_incorrect_behavior) || 0;
+totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearing) || 0;
           
           if (batch.problem_phrases) {
             try {
@@ -2077,7 +2121,7 @@ class AnalysisModalComponent {
             ` : ''}
             
             <h4><i class="fas fa-comment-alt"></i> Обоснование</h4>
-            <div class="batch-justification">${batch.justification || 'Обоснование отсутствует'}</div>
+<div class="batch-justification">${Utils.markdownToHtml(batch.justification) || 'Обоснование отсутствует'}</div>
           </div>
         </div>
       </div>
