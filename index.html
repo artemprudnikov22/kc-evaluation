@@ -5,14 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Сервис ИИ-аналитики колл-центра | СЕВСТАР</title>
 <link rel="icon" type="image/x-icon" href="favicon.ico">
-<!-- Вместо inline стилей подключим через link для чистоты -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
 <div id="app"></div>
 
-<!-- Подключаем модули -->
 <script type="module">
 // ============================================================================
 // КОНФИГУРАЦИЯ
@@ -30,7 +28,7 @@ const CONFIG = {
 };
 
 // ============================================================================
-// СТИЛИ (выносим в отдельную секцию)
+// СТИЛИ
 // ============================================================================
 const STYLES = `
 :root {
@@ -82,7 +80,6 @@ body {
   padding: 0;
 }
 
-/* Анимации */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
@@ -104,7 +101,6 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Основной контейнер */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -112,7 +108,6 @@ body {
   animation: fadeIn var(--transition-slow);
 }
 
-/* Хедер */
 .header {
   display: flex;
   align-items: center;
@@ -181,14 +176,12 @@ body {
   letter-spacing: 0.5px;
 }
 
-/* Основной контент */
 .main-content {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
 }
 
-/* Карточки сотрудников */
 .employee-cards-container {
   background: var(--light);
   border-radius: var(--radius-lg);
@@ -258,7 +251,6 @@ body {
   font-weight: 600;
 }
 
-/* Карточка сотрудника */
 .employee-card {
   background: var(--light);
   border-radius: var(--radius-md);
@@ -375,7 +367,6 @@ body {
   text-align: right;
 }
 
-/* Статистика сотрудника */
 .employee-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -421,7 +412,6 @@ body {
   margin-top: 4px;
 }
 
-/* Кнопка подробнее */
 .details-toggle {
   background: transparent;
   color: var(--primary);
@@ -447,7 +437,6 @@ body {
   box-shadow: var(--shadow-md);
 }
 
-/* Подробная информация */
 .employee-details {
   margin-top: 20px;
   padding: 20px;
@@ -555,7 +544,6 @@ body {
   color: var(--gray-400);
 }
 
-/* Модальные окна */
 .modal {
   display: none;
   position: fixed;
@@ -579,6 +567,8 @@ body {
   box-shadow: var(--shadow-xl);
   animation: slideInRight var(--transition-base);
   overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal-header {
@@ -692,7 +682,6 @@ body {
   background: var(--gray-300);
 }
 
-/* Анализ модалка */
 .analysis-modal-content {
   max-width: 800px;
   max-height: 80vh;
@@ -814,15 +803,18 @@ body {
 .batch-content {
   padding: 0;
   max-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   transition: max-height var(--transition-base);
   border-top: 1px solid transparent;
+  box-sizing: border-box;
 }
 
 .batch-item.expanded .batch-content {
   max-height: 500px;
   padding: 20px;
   border-top-color: var(--gray-200);
+  overflow-y: auto;
 }
 
 .batch-analysis {
@@ -878,6 +870,8 @@ body {
   background: var(--gray-50);
   border-radius: var(--radius-md);
   border-left: 3px solid var(--accent);
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .batch-justification strong {
@@ -885,7 +879,58 @@ body {
   font-weight: 700;
 }
 
-/* Лоадер */
+.behavior-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.behavior-stat {
+  text-align: center;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+}
+
+.behavior-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.behavior-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.behavior-stat-label {
+  font-size: 12px;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.problem-phrases h5, .behavior-history h5 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .behavior-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .employee-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
 .loader-backdrop {
   display: none;
   position: fixed;
@@ -955,7 +1000,6 @@ body {
   border-radius: 2px;
 }
 
-/* Утилиты */
 .icon {
   width: 20px;
   height: 20px;
@@ -964,7 +1008,6 @@ body {
   justify-content: center;
 }
 
-/* Адаптивность */
 @media (max-width: 768px) {
   .container {
     padding: 16px;
@@ -1006,7 +1049,6 @@ body {
   }
 }
 
-/* Кастомный скроллбар */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -1026,7 +1068,6 @@ body {
   background: var(--gray-500);
 }
 
-/* Распределение по сложности */
 .complexity-distribution {
   display: flex;
   justify-content: space-between;
@@ -1080,22 +1121,6 @@ body {
   font-size: 14px;
   font-weight: 700;
 }
-
-/* Адаптивность для распределения сложности */
-@media (max-width: 768px) {
-  .complexity-distribution {
-    gap: 4px;
-  }
-  
-  .complexity-level {
-    padding: 4px 6px;
-    min-width: 36px;
-  }
-  
-  .complexity-count {
-    font-size: 12px;
-  }
-}
 `;
 
 // ============================================================================
@@ -1109,7 +1134,6 @@ class AppState {
     this.nextEmployeeId = 106;
   }
 
-  // Геттеры
   getEmployee(id) {
     return this.employees.find(e => e.id === id);
   }
@@ -1122,7 +1146,6 @@ class AppState {
     return this.aggregatedAnalysisData[employeeId] || [];
   }
 
-  // Сеттеры
   setEmployees(employees) {
     this.employees = employees;
     if (employees.length > 0) {
@@ -1138,7 +1161,6 @@ class AppState {
     this.aggregatedAnalysisData = data;
   }
 
-  // Обновление сотрудника
   updateEmployee(id, updates) {
     const index = this.employees.findIndex(e => e.id === id);
     if (index !== -1) {
@@ -1146,7 +1168,6 @@ class AppState {
     }
   }
 
-  // Добавление сотрудника
   addEmployee(employee) {
     employee.id = this.nextEmployeeId++;
     employee.expanded = false;
@@ -1277,68 +1298,215 @@ class Utils {
   }
 
   static createAggregatedAnalyses(analysisData) {
-  const aggregated = {};
-  
-  for (const [employeeId, analyses] of Object.entries(analysisData)) {
-    if (!analyses || analyses.length === 0) continue;
+    const aggregated = {};
     
-    const groups = Utils.groupAnalysesByTimeWindow(analyses);
-    
-    aggregated[employeeId] = groups.map((group, index) => {
-      // Взвешенные суммы с учетом количества диалогов
-      let totalWeightedComplexity = 0;
-      let totalWeightedIER = 0;
-      let totalDialogs = 0;
+    for (const [employeeId, analyses] of Object.entries(analysisData)) {
+      if (!analyses || analyses.length === 0) continue;
       
-      group.forEach(batch => {
-        const dialogsCount = parseInt(batch.dialogs_count) || 0;
-        const complexity = parseFloat(batch.complexity_level) || 0;
-        const ier = parseFloat(batch.ier_coefficient) || 0;
+      const groups = Utils.groupAnalysesByTimeWindow(analyses);
+      
+      aggregated[employeeId] = groups.map((group, index) => {
+        let totalWeightedComplexity = 0;
+        let totalWeightedIER = 0;
+        let totalDialogs = 0;
         
-        totalWeightedComplexity += complexity * dialogsCount;
-        totalWeightedIER += ier * dialogsCount;
-        totalDialogs += dialogsCount;
+        let totalLevel1 = 0;
+        let totalLevel2 = 0;
+        let totalLevel3 = 0;
+        let totalLevel4 = 0;
+        let totalIncorrectBehavior = 0;
+        let totalSwearing = 0;
+        let problemPhrases = [];
+        let toneDistribution = {
+          professional: 0,
+          neutral: 0,
+          negative: 0,
+          aggressive: 0
+        };
+        let overallTone = 'нейтральный';
+        let toneRecommendations = '';
+        let allToneSuggestions = [];
+        
+        group.forEach(batch => {
+          const dialogsCount = parseInt(batch.dialogs_count) || 0;
+          const complexity = parseFloat(batch.complexity_level) || 0;
+          const ier = parseFloat(batch.ier_coefficient) || 0;
+          
+          totalWeightedComplexity += complexity * dialogsCount;
+          totalWeightedIER += ier * dialogsCount;
+          totalDialogs += dialogsCount;
+          
+          totalLevel1 += parseInt(batch.level1_count) || 0;
+          totalLevel2 += parseInt(batch.level2_count) || 0;
+          totalLevel3 += parseInt(batch.level3_count) || 0;
+          totalLevel4 += parseInt(batch.level4_count) || 0;
+          totalIncorrectBehavior += parseInt(batch.incorrect_behavior_count) || 0;
+          totalSwearing += parseInt(batch.swearing_count) || 0;
+          
+          if (batch.problem_phrases) {
+            try {
+              const phrases = JSON.parse(batch.problem_phrases);
+              if (Array.isArray(phrases)) {
+                problemPhrases.push(...phrases);
+              }
+            } catch (e) {
+              if (batch.problem_phrases.trim() !== '') {
+                problemPhrases.push(batch.problem_phrases);
+              }
+            }
+          }
+          
+          // ИЗВЛЕЧЕНИЕ РАСПРЕДЕЛЕНИЯ ТОНАЛЬНОСТИ
+          let batchHasDistribution = false;
+          
+          // 1. Пробуем получить распределение из behavior_analysis_json (приоритетный источник)
+          if (batch.behavior_analysis_json && batch.behavior_analysis_json !== '{}') {
+            try {
+              const behaviorAnalysis = JSON.parse(batch.behavior_analysis_json);
+              if (behaviorAnalysis.summary && behaviorAnalysis.summary.tone_distribution) {
+                const dist = behaviorAnalysis.summary.tone_distribution;
+                toneDistribution.professional += dist.professional || 0;
+                toneDistribution.neutral += dist.neutral || 0;
+                toneDistribution.negative += dist.negative || 0;
+                toneDistribution.aggressive += dist.aggressive || 0;
+                batchHasDistribution = true;
+              }
+              
+              if (behaviorAnalysis.summary && behaviorAnalysis.summary.tone_recommendations) {
+                toneRecommendations = behaviorAnalysis.summary.tone_recommendations;
+              }
+              
+              if (behaviorAnalysis.dialogs && Array.isArray(behaviorAnalysis.dialogs)) {
+                behaviorAnalysis.dialogs.forEach(dialog => {
+                  if (dialog.tone_improvement_suggestions && dialog.tone_improvement_suggestions.trim()) {
+                    allToneSuggestions.push(`Диалог ${dialog.dialog_id}: ${dialog.tone_improvement_suggestions}`);
+                  }
+                });
+              }
+            } catch (e) {
+              console.error('Ошибка парсинга behavior_analysis_json:', e.message);
+              batchHasDistribution = false;
+            }
+          }
+          
+          // 2. Если нет распределения из JSON, используем overall_tone
+          if (!batchHasDistribution && batch.overall_tone) {
+            const tone = batch.overall_tone.toLowerCase().trim();
+            const dialogsInBatch = dialogsCount > 0 ? dialogsCount : 1;
+            
+            if (tone.includes('профессиональный') || tone.includes('professional')) {
+              toneDistribution.professional += dialogsInBatch;
+            } else if (tone.includes('нейтральный') || tone.includes('neutral')) {
+              toneDistribution.neutral += dialogsInBatch;
+            } else if (tone.includes('негативный') || tone.includes('negative')) {
+              toneDistribution.negative += dialogsInBatch;
+            } else if (tone.includes('агрессивный') || tone.includes('aggressive')) {
+              toneDistribution.aggressive += dialogsInBatch;
+            }
+          }
+          
+          // 3. Рекомендации из корневого поля (если еще нет)
+          if (batch.tone_recommendations && batch.tone_recommendations.trim() && !toneRecommendations) {
+            toneRecommendations = batch.tone_recommendations;
+          }
+          
+          // 4. Конкретные рекомендации по диалогам из tone_distribution_json
+          if (batch.tone_distribution_json && batch.tone_distribution_json.trim()) {
+            // Проверяем, нет ли уже таких рекомендаций
+            const suggestionExists = allToneSuggestions.some(s => s.includes(batch.tone_distribution_json));
+            if (!suggestionExists) {
+              allToneSuggestions.push(batch.tone_distribution_json);
+            }
+          }
+        });
+        
+        // Определяем преобладающий тон на основе распределения
+        const tones = Object.entries(toneDistribution);
+        let maxCount = 0;
+        tones.forEach(([tone, count]) => {
+          if (count > maxCount) {
+            maxCount = count;
+            overallTone = tone;
+          }
+        });
+        
+        // Если все тона равны 0, устанавливаем нейтральный
+        if (maxCount === 0) {
+          overallTone = 'нейтральный';
+        }
+        
+        const avgComplexity = totalDialogs > 0 ? 
+          (totalWeightedComplexity / totalDialogs).toFixed(2) : '0';
+        const avgIER = totalDialogs > 0 ? 
+          (totalWeightedIER / totalDialogs).toFixed(2) : '0';
+        
+        const startTime = new Date(group[0].analyzed_at);
+        const endTime = new Date(group[group.length - 1].analyzed_at);
+        
+        const dialogIds = group
+          .map(a => a.dialog_ids || '')
+          .filter(id => id)
+          .join(', ');
+        
+        return {
+          id: `agg_${employeeId}_${index}_${Date.now()}`,
+          employee_id: parseInt(employeeId),
+          start_time: startTime,
+          end_time: endTime,
+          total_dialogs: totalDialogs,
+          batch_count: group.length,
+          avg_complexity: avgComplexity,
+          avg_ier: avgIER,
+          total_ier: group.reduce((sum, a) => sum + (parseFloat(a.ier_coefficient) || 0), 0),
+          dialog_ids: dialogIds,
+          
+          level_counts: {
+            1: totalLevel1,
+            2: totalLevel2,
+            3: totalLevel3,
+            4: totalLevel4
+          },
+          total_level1: totalLevel1,
+          total_level2: totalLevel2,
+          total_level3: totalLevel3,
+          total_level4: totalLevel4,
+          incorrect_behavior_count: totalIncorrectBehavior,
+          swearing_count: totalSwearing,
+          has_incorrect_behavior: totalIncorrectBehavior > 0,
+          has_swearing: totalSwearing > 0,
+          problem_phrases: problemPhrases,
+          overall_tone: overallTone,
+          tone_distribution: toneDistribution,
+          tone_recommendations: toneRecommendations,
+          all_tone_suggestions: allToneSuggestions,
+          behavior_summary_str: group[0]?.behavior_summary_str || '',
+          
+          batches: group.map(batch => ({
+            ...batch,
+            parsed_ier: parseFloat(batch.ier_coefficient) || 0,
+            parsed_complexity: parseFloat(batch.complexity_level) || 0,
+            parsed_dialogs: parseInt(batch.dialogs_count) || 0,
+            parsed_level1: parseInt(batch.level1_count) || 0,
+            parsed_level2: parseInt(batch.level2_count) || 0,
+            parsed_level3: parseInt(batch.level3_count) || 0,
+            parsed_level4: parseInt(batch.level4_count) || 0,
+            parsed_incorrect_behavior: parseInt(batch.incorrect_behavior_count) || 0,
+            parsed_swearing: parseInt(batch.swearing_count) || 0,
+            parsed_has_incorrect_behavior: batch.has_incorrect_behavior === true,
+            parsed_has_swearing: batch.has_swearing === true,
+            parsed_problem_phrases: batch.problem_phrases || '',
+            parsed_overall_tone: batch.overall_tone || 'нейтральный',
+            parsed_tone_recommendations: batch.tone_recommendations || '',
+            parsed_tone_suggestions: batch.tone_distribution_json || ''
+          })),
+          formatted_date: Utils.formatDate(group[0].analyzed_at),
+          formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
+        };
       });
-      
-      // Взвешенное среднее (учитываем количество диалогов в каждом батче)
-      const avgComplexity = totalDialogs > 0 ? 
-        (totalWeightedComplexity / totalDialogs).toFixed(2) : '0';
-      const avgIER = totalDialogs > 0 ? 
-        (totalWeightedIER / totalDialogs).toFixed(2) : '0';
-      
-      const startTime = new Date(group[0].analyzed_at);
-      const endTime = new Date(group[group.length - 1].analyzed_at);
-      
-      const dialogIds = group
-        .map(a => a.dialog_ids || '')
-        .filter(id => id)
-        .join(', ');
-      
-      return {
-        id: `agg_${employeeId}_${index}_${Date.now()}`,
-        employee_id: parseInt(employeeId),
-        start_time: startTime,
-        end_time: endTime,
-        total_dialogs: totalDialogs,
-        batch_count: group.length,
-        avg_complexity: avgComplexity,
-        avg_ier: avgIER,
-        total_ier: group.reduce((sum, a) => sum + (parseFloat(a.ier_coefficient) || 0), 0),
-        dialog_ids: dialogIds,
-        batches: group.map(batch => ({
-          ...batch,
-          parsed_ier: parseFloat(batch.ier_coefficient) || 0,
-          parsed_complexity: parseFloat(batch.complexity_level) || 0,
-          parsed_dialogs: parseInt(batch.dialogs_count) || 0
-        })),
-        formatted_date: Utils.formatDate(group[0].analyzed_at),
-        formatted_time: `${Utils.formatTime(group[0].analyzed_at)} - ${Utils.formatTime(group[group.length - 1].analyzed_at)}`
-      };
-    });
+    }
+    
+    return aggregated;
   }
-  
-  return aggregated;
-}
 
   static calculateAverageIER(aggregatedAnalyses) {
     if (!aggregatedAnalyses || aggregatedAnalyses.length === 0) return 0;
@@ -1363,11 +1531,9 @@ class Utils {
         const complexity = parseFloat(analysis.complexity_level);
         if (complexity >= 1 && complexity <= 4) {
           const dialogsCount = parseInt(analysis.dialogs_count) || 0;
-          // Если сложность - целое число, добавляем к соответствующему уровню
           if (Number.isInteger(complexity)) {
             distribution[complexity] += dialogsCount;
           } else {
-            // Если сложность дробная, распределяем по ближайшим уровням
             const floor = Math.floor(complexity);
             const ceil = Math.ceil(complexity);
             const ratio = complexity - floor;
@@ -1383,8 +1549,37 @@ class Utils {
     
     return distribution;
   }
+
+  static getToneLabel(tone) {
+    const toneMap = {
+      professional: 'Профессиональный',
+      neutral: 'Нейтральный',
+      negative: 'Негативный',
+      aggressive: 'Агрессивный',
+      'профессиональный': 'Профессиональный',
+      'нейтральный': 'Нейтральный',
+      'негативный': 'Негативный',
+      'агрессивный': 'Агрессивный'
+    };
+    return toneMap[tone] || tone || 'Не определено';
+  }
+
+  static getToneColor(tone) {
+    const colorMap = {
+      professional: '#1976D2',
+      neutral: '#616161',
+      negative: '#F57C00',
+      aggressive: '#D32F2F',
+      'профессиональный': '#1976D2',
+      'нейтральный': '#616161',
+      'негативный': '#F57C00',
+      'агрессивный': '#D32F2F'
+    };
+    return colorMap[tone] || '#616161';
+  }
 }
-// 
+
+// ============================================================================
 // КОМПОНЕНТЫ UI
 // ============================================================================
 class UILoader {
@@ -1429,7 +1624,7 @@ class UIModal {
 
   static setupOutsideClick() {
     window.addEventListener('click', (event) => {
-      const modals = ['addEmployeeModal', 'analysisModal'];
+      const modals = ['addEmployeeModal', 'analysisModal', 'behaviorModal', 'toneModal'];
       modals.forEach(modalId => {
         const modal = document.getElementById(modalId);
         if (modal && event.target === modal) {
@@ -1475,14 +1670,51 @@ class HeaderComponent {
 
 class EmployeeCardComponent {
   static render(employee, aggregatedAnalyses, app) {
+    let overallTone = 'нейтральный';
+    const toneCounts = {
+      professional: 0,
+      neutral: 0,
+      negative: 0,
+      aggressive: 0
+    };
+    
+    let allToneRecommendations = [];
+    
+    aggregatedAnalyses.forEach(agg => {
+      if (agg.tone_distribution) {
+        toneCounts.professional += agg.tone_distribution.professional || 0;
+        toneCounts.neutral += agg.tone_distribution.neutral || 0;
+        toneCounts.negative += agg.tone_distribution.negative || 0;
+        toneCounts.aggressive += agg.tone_distribution.aggressive || 0;
+      }
+      
+      if (agg.tone_recommendations) {
+        allToneRecommendations.push({
+          date: agg.formatted_date,
+          recommendation: agg.tone_recommendations
+        });
+      }
+    });
+    
+    let maxCount = 0;
+    Object.entries(toneCounts).forEach(([tone, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        overallTone = tone;
+      }
+    });
+    
     const avgIER = Utils.calculateAverageIER(aggregatedAnalyses);
     const lastIER = aggregatedAnalyses.length > 0 ? aggregatedAnalyses[aggregatedAnalyses.length - 1].avg_ier : '—';
     const lastDate = aggregatedAnalyses.length > 0 ? aggregatedAnalyses[aggregatedAnalyses.length - 1].formatted_date : '—';
     const totalDialogs = aggregatedAnalyses.reduce((sum, a) => sum + a.total_dialogs, 0);
     
-    // Получаем все анализы сотрудника для подсчета распределения
-    const allAnalyses = app.state.getAnalyses(employee.id);
-    const complexityDistribution = Utils.calculateComplexityDistribution(allAnalyses);
+    const totalLevel1 = aggregatedAnalyses.reduce((sum, a) => sum + (a.total_level1 || 0), 0);
+    const totalLevel2 = aggregatedAnalyses.reduce((sum, a) => sum + (a.total_level2 || 0), 0);
+    const totalLevel3 = aggregatedAnalyses.reduce((sum, a) => sum + (a.total_level3 || 0), 0);
+    const totalLevel4 = aggregatedAnalyses.reduce((sum, a) => sum + (a.total_level4 || 0), 0);
+    const totalIncorrectBehavior = aggregatedAnalyses.reduce((sum, a) => sum + (a.incorrect_behavior_count || 0), 0);
+    const totalSwearing = aggregatedAnalyses.reduce((sum, a) => sum + (a.swearing_count || 0), 0);
     
     return `
       <div class="employee-card" data-employee-id="${employee.id}">
@@ -1546,7 +1778,6 @@ class EmployeeCardComponent {
             <div class="stat-card-subtitle">Всего обработано</div>
           </div>
           
-          <!-- Новая карточка для распределения сложности -->
           <div class="stat-card">
             <div class="stat-card-title">
               <i class="fas fa-signal"></i>
@@ -1555,22 +1786,67 @@ class EmployeeCardComponent {
             <div class="complexity-distribution">
               <div class="complexity-level level-1" title="Уровень 1 (Простые)">
                 <span class="complexity-label">1</span>
-                <span class="complexity-count">${complexityDistribution[1]}</span>
+                <span class="complexity-count">${totalLevel1}</span>
               </div>
               <div class="complexity-level level-2" title="Уровень 2 (Средние)">
                 <span class="complexity-label">2</span>
-                <span class="complexity-count">${complexityDistribution[2]}</span>
+                <span class="complexity-count">${totalLevel2}</span>
               </div>
               <div class="complexity-level level-3" title="Уровень 3 (Сложные)">
                 <span class="complexity-label">3</span>
-                <span class="complexity-count">${complexityDistribution[3]}</span>
+                <span class="complexity-count">${totalLevel3}</span>
               </div>
               <div class="complexity-level level-4" title="Уровень 4 (Очень сложные)">
                 <span class="complexity-label">4</span>
-                <span class="complexity-count">${complexityDistribution[4]}</span>
+                <span class="complexity-count">${totalLevel4}</span>
               </div>
             </div>
             <div class="stat-card-subtitle">Уровни сложности диалогов</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-title">
+              <i class="fas fa-exclamation-triangle"></i>
+              Анализ поведения
+            </div>
+            <div class="complexity-distribution">
+              <div class="complexity-level" style="background: linear-gradient(135deg, #FF4757 0%, #FF6B81 100%); color: white;">
+                <span class="complexity-label">⚠️</span>
+                <span class="complexity-count">${totalIncorrectBehavior}</span>
+              </div>
+              <div class="complexity-level" style="background: linear-gradient(135deg, #FF9F43 0%, #FFC061 100%); color: white;">
+                <span class="complexity-label">🔞</span>
+                <span class="complexity-count">${totalSwearing}</span>
+              </div>
+            </div>
+            <div class="stat-card-subtitle">Некорректное поведение / Ругательства</div>
+            ${totalIncorrectBehavior > 0 || totalSwearing > 0 ? 
+              `<button class="details-toggle" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;" onclick="app.handlers.openBehaviorModal(${employee.id})">
+                <i class="fas fa-info-circle"></i> Детали поведения
+              </button>` : ''
+            }
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-card-title">
+              <i class="fas fa-comments"></i>
+              Тональность общения
+            </div>
+            <div class="stat-card-value" style="font-size: 20px; color: ${Utils.getToneColor(overallTone)}">
+              ${Utils.getToneLabel(overallTone)}
+            </div>
+            <div class="stat-card-subtitle">
+              Проф: ${toneCounts.professional}, Нейтр: ${toneCounts.neutral}<br>
+              Негат: ${toneCounts.negative}, Агресс: ${toneCounts.aggressive}
+            </div>
+            ${allToneRecommendations.length > 0 ? `
+              <div style="font-size: 11px; color: var(--primary); margin-top: 4px;">
+                <i class="fas fa-lightbulb"></i> Есть рекомендации
+              </div>
+            ` : ''}
+            <button class="details-toggle" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;" onclick="app.handlers.openToneModal(${employee.id})">
+              <i class="fas fa-chart-bar"></i> Подробный анализ
+            </button>
           </div>
         </div>
         
@@ -1604,6 +1880,8 @@ class EmployeeCardComponent {
           <div class="analysis-date">
             <i class="fas fa-calendar"></i>
             ${agg.formatted_date}
+            ${agg.has_incorrect_behavior ? ' <span style="color: #FF4757; margin-left: 8px;">⚠️</span>' : ''}
+            ${agg.has_swearing ? ' <span style="color: #FF9F43;">🔞</span>' : ''}
           </div>
           <div class="analysis-stats">
             <div class="analysis-stat">
@@ -1620,6 +1898,8 @@ class EmployeeCardComponent {
           <strong>Диалогов:</strong> ${agg.total_dialogs} • 
           <strong>Средний ИЭР:</strong> ${agg.avg_ier} • 
           <strong>Средняя сложность:</strong> ${agg.avg_complexity}
+          ${agg.incorrect_behavior_count > 0 ? ` • <strong style="color: #FF4757;">Некорр.поведение:</strong> ${agg.incorrect_behavior_count}` : ''}
+          ${agg.swearing_count > 0 ? ` • <strong style="color: #FF9F43;">Ругательства:</strong> ${agg.swearing_count}` : ''}
         </div>
       </div>
     `).join('');
@@ -1680,6 +1960,8 @@ class AnalysisModalComponent {
             <div class="batch-number">${index + 1}</div>
             <div class="batch-details">
               Батч от ${batchTime} • ${batch.dialogs_count} диалогов
+              ${batch.parsed_has_incorrect_behavior ? ' <span style="color: #FF4757;">⚠️</span>' : ''}
+              ${batch.parsed_has_swearing ? ' <span style="color: #FF9F43;">🔞</span>' : ''}
             </div>
           </div>
           <div class="batch-stats">
@@ -1691,6 +1973,18 @@ class AnalysisModalComponent {
               <i class="fas fa-layer-group"></i>
               <span>Сложность: ${batch.complexity_level}</span>
             </div>
+            ${batch.parsed_has_incorrect_behavior || batch.parsed_has_swearing ? `
+              <div class="batch-stat">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Поведение</span>
+              </div>
+            ` : ''}
+            ${batch.parsed_tone_recommendations ? `
+              <div class="batch-stat">
+                <i class="fas fa-comments"></i>
+                <span>Тон</span>
+              </div>
+            ` : ''}
           </div>
           <div class="batch-arrow">
             <i class="fas fa-chevron-down"></i>
@@ -1716,7 +2010,71 @@ class AnalysisModalComponent {
                 <div class="batch-stat-value">${batch.parsed_count || 0}</div>
                 <div class="batch-stat-label">Обработано</div>
               </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.parsed_level1 || 0}</div>
+                <div class="batch-stat-label">Ур.1</div>
+              </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.parsed_level2 || 0}</div>
+                <div class="batch-stat-label">Ур.2</div>
+              </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.parsed_level3 || 0}</div>
+                <div class="batch-stat-label">Ур.3</div>
+              </div>
+              <div class="batch-stat">
+                <div class="batch-stat-value">${batch.parsed_level4 || 0}</div>
+                <div class="batch-stat-label">Ур.4</div>
+              </div>
             </div>
+            
+            ${batch.parsed_tone_recommendations ? `
+              <h4><i class="fas fa-comments"></i> Анализ тональности</h4>
+              <div class="batch-stats-grid">
+                <div class="batch-stat">
+                  <div class="batch-stat-value" style="font-size: 16px;">${batch.parsed_overall_tone || 'нейтральный'}</div>
+                  <div class="batch-stat-label">Общий тон</div>
+                </div>
+              </div>
+              ${batch.parsed_tone_recommendations ? `
+                <div style="margin-top: 12px; padding: 12px; background: #E8F5E9; border-radius: var(--radius-md);">
+                  <strong>Рекомендации по тону:</strong>
+                  <div style="margin-top: 8px; font-size: 13px;">${batch.parsed_tone_recommendations}</div>
+                </div>
+              ` : ''}
+              ${batch.parsed_tone_suggestions ? `
+                <div style="margin-top: 12px; padding: 12px; background: #E3F2FD; border-radius: var(--radius-md);">
+                  <strong>Конкретные рекомендации:</strong>
+                  <div style="margin-top: 8px; font-size: 13px;">${batch.parsed_tone_suggestions}</div>
+                </div>
+              ` : ''}
+            ` : ''}
+            
+            ${batch.parsed_has_incorrect_behavior || batch.parsed_has_swearing ? `
+              <h4><i class="fas fa-user-check"></i> Анализ поведения</h4>
+              <div class="batch-stats-grid">
+                <div class="batch-stat" style="background: ${batch.parsed_incorrect_behavior > 0 ? '#FFE8E8' : 'var(--gray-50)'};">
+                  <div class="batch-stat-value" style="color: ${batch.parsed_incorrect_behavior > 0 ? '#FF4757' : 'var(--primary)'};">${batch.parsed_incorrect_behavior || 0}</div>
+                  <div class="batch-stat-label">Некорректное поведение</div>
+                </div>
+                <div class="batch-stat" style="background: ${batch.parsed_swearing > 0 ? '#FFF4E8' : 'var(--gray-50)'};">
+                  <div class="batch-stat-value" style="color: ${batch.parsed_swearing > 0 ? '#FF9F43' : 'var(--primary)'};">${batch.parsed_swearing || 0}</div>
+                  <div class="batch-stat-label">Ругательства</div>
+                </div>
+              </div>
+              
+              ${batch.parsed_problem_phrases ? `
+                <h4><i class="fas fa-comment-exclamation"></i> Проблемные фразы</h4>
+                <div class="batch-justification" style="max-height: 150px;">
+                  ${typeof batch.parsed_problem_phrases === 'string' ? 
+                    batch.parsed_problem_phrases : 
+                    (Array.isArray(batch.parsed_problem_phrases) ? 
+                      batch.parsed_problem_phrases.map(p => `• ${p}`).join('<br>') : 
+                      'Нет данных')
+                  }
+                </div>
+              ` : ''}
+            ` : ''}
             
             <h4><i class="fas fa-comment-alt"></i> Обоснование</h4>
             <div class="batch-justification">${batch.justification || 'Обоснование отсутствует'}</div>
@@ -1738,16 +2096,9 @@ class App {
   }
 
   async init() {
-    // Добавляем стили
     this.addStyles();
-    
-    // Инициализируем UI
     this.renderApp();
-    
-    // Загружаем данные
     await this.loadData();
-    
-    // Обновляем UI
     this.updateUI();
   }
 
@@ -1761,7 +2112,6 @@ class App {
     const appContainer = document.getElementById('app');
     appContainer.innerHTML = `
       <div class="container">
-        <!-- Хедер будет загружен динамически -->
         <div id="header"></div>
         
         <main class="main-content">
@@ -1786,7 +2136,6 @@ class App {
         </main>
       </div>
       
-      <!-- Лоадер -->
       <div class="loader-backdrop" id="loaderBackdrop"></div>
       <div class="loader" id="loader">
         <div class="spinner"></div>
@@ -1797,16 +2146,6 @@ class App {
         </div>
       </div>
       
-      <!-- Модальные окна -->
-      ${this.renderAddEmployeeModal()}
-      <div id="analysisModal" class="modal"></div>
-    `;
-    
-    UIModal.setupOutsideClick();
-  }
-
-  renderAddEmployeeModal() {
-    return `
       <div id="addEmployeeModal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
@@ -1829,14 +2168,38 @@ class App {
           </div>
         </div>
       </div>
+      <div id="analysisModal" class="modal"></div>
+      <div id="behaviorModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+          <div class="modal-header">
+            <h3>Детальный анализ поведения</h3>
+            <button class="close-btn" onclick="UIModal.close('behaviorModal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="behaviorModalContent"></div>
+          </div>
+        </div>
+      </div>
+      <div id="toneModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+          <div class="modal-header">
+            <h3>Анализ тональности общения</h3>
+            <button class="close-btn" onclick="UIModal.close('toneModal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="toneModalContent"></div>
+          </div>
+        </div>
+      </div>
     `;
+    
+    UIModal.setupOutsideClick();
   }
 
   async loadData() {
     UILoader.show('Загрузка данных...', 'Подключение к сервису AI-аналитики');
     
     try {
-      // Загружаем сотрудников
       const employeesData = await ApiService.loadEmployees();
       if (Array.isArray(employeesData) && employeesData.length > 0) {
         const employees = employeesData.map(row => ({
@@ -1848,7 +2211,6 @@ class App {
         this.state.setEmployees(employees);
       }
 
-      // Загружаем анализы
       const analysisRows = await ApiService.loadAnalysisData();
       const analysisData = {};
       
@@ -1867,14 +2229,29 @@ class App {
             sum_complexity: row.sum_complexity,
             batch_summary: row.batch_summary,
             parsed_count: row.parsed_count,
-            analyzed_at: row.analyzed_at
+            analyzed_at: row.analyzed_at,
+            
+            level1_count: row.level1_count || 0,
+            level2_count: row.level2_count || 0,
+            level3_count: row.level3_count || 0,
+            level4_count: row.level4_count || 0,
+            levelcounts_summary: row.levelcounts_summary || '',
+            incorrect_behavior_count: row.incorrect_behavior_count || 0,
+            swearing_count: row.swearing_count || 0,
+            has_incorrect_behavior: row.has_incorrect_behavior || false,
+            has_swearing: row.has_swearing || false,
+            problem_phrases: row.problem_phrases || '',
+            overall_tone: row.overall_tone || 'нейтральный',
+            tone_recommendations: row.tone_recommendations || '',
+            tone_distribution_json: row.tone_distribution_json || '',
+            behavior_summary_str: row.behavior_summary_str || '',
+            behavior_analysis_json: row.behavior_analysis_json || '{}'
           });
         });
       }
       
       this.state.setAnalysisData(analysisData);
       
-      // Создаем агрегированные анализы
       const aggregated = Utils.createAggregatedAnalyses(analysisData);
       this.state.setAggregatedAnalysisData(aggregated);
       
@@ -1886,10 +2263,7 @@ class App {
   }
 
   updateUI() {
-    // Обновляем статистику
     this.updateStats();
-    
-    // Рендерим сотрудников
     this.renderEmployees();
   }
 
@@ -1906,7 +2280,6 @@ class App {
       });
     });
     
-    // Обновляем хедер
     const headerContainer = document.getElementById('header');
     if (headerContainer) {
       headerContainer.innerHTML = HeaderComponent.render(totalEmployees, totalAnalyses, totalDialogs);
@@ -1928,16 +2301,15 @@ class App {
     }
     
     const cards = this.state.employees.map(employee => {
-  const aggregatedAnalyses = this.state.getAggregatedAnalyses(employee.id);
-  return EmployeeCardComponent.render(employee, aggregatedAnalyses, this);
-}).join('');
+      const aggregatedAnalyses = this.state.getAggregatedAnalyses(employee.id);
+      return EmployeeCardComponent.render(employee, aggregatedAnalyses, this);
+    }).join('');
     
     contentContainer.innerHTML = cards;
   }
 
   createHandlers() {
     return {
-      // Обработка загрузки файла
       handleUpload: async (event, employeeId) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -1945,14 +2317,12 @@ class App {
         const employee = this.state.getEmployee(employeeId);
         const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
 
-        // Проверка размера файла
         if (file.size > CONFIG.MAX_FILE_SIZE_MB * 1024 * 1024) {
           alert(`Файл слишком большой. Максимальный размер: ${CONFIG.MAX_FILE_SIZE_MB} МБ`);
           event.target.value = '';
           return;
         }
 
-        // Подтверждение для больших файлов
         if (file.size > CONFIG.WARN_FILE_SIZE_MB * 1024 * 1024) {
           const confirmUpload = confirm(
             `Файл довольно большой (${fileSizeMB} МБ). Обработка может занять несколько минут.\n\nПродолжить загрузку?`
@@ -1977,7 +2347,6 @@ class App {
           
           alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nДиалогов: ${result.total || result.processed || 'N/A'}`);
           
-          // Обновляем данные
           UILoader.show('Обновление данных...');
           await this.loadData();
           this.updateUI();
@@ -1991,7 +2360,6 @@ class App {
         event.target.value = '';
       },
 
-      // Редактирование имени сотрудника
       editEmployeeName: async (employeeId, currentName) => {
         const employee = this.state.getEmployee(employeeId);
         if (!employee) return;
@@ -2001,7 +2369,6 @@ class App {
           this.state.updateEmployee(employeeId, { name: newName.trim() });
           this.updateUI();
           
-          // Синхронизируем с БД
           const employeesData = this.state.employees.map(emp => ({
             id: emp.id,
             name: emp.name,
@@ -2025,7 +2392,6 @@ class App {
         }
       },
 
-      // Переключение деталей сотрудника
       toggleEmployeeDetails: (employeeId) => {
         const employee = this.state.getEmployee(employeeId);
         if (employee) {
@@ -2034,7 +2400,6 @@ class App {
         }
       },
 
-      // Открытие модального окна с анализом
       openAnalysisModal: (employeeId, analysisIndex) => {
         const employee = this.state.getEmployee(employeeId);
         const aggregatedAnalyses = this.state.getAggregatedAnalyses(employeeId);
@@ -2046,7 +2411,6 @@ class App {
         }
       },
 
-      // Переключение деталей батча
       toggleBatchDetails: (employeeId, batchIndex) => {
         const batchElement = document.getElementById(`batch-${employeeId}-${batchIndex}`);
         if (batchElement) {
@@ -2054,7 +2418,6 @@ class App {
         }
       },
 
-      // Модальные окна
       openAddEmployeeModal: () => {
         UIModal.open('addEmployeeModal');
         document.getElementById('newEmpName').value = '';
@@ -2075,7 +2438,6 @@ class App {
         UIModal.close('addEmployeeModal');
         this.updateUI();
 
-        // Синхронизируем с БД
         const employeesData = this.state.employees.map(emp => ({
           id: emp.id,
           name: emp.name,
@@ -2096,20 +2458,312 @@ class App {
         }));
         
         await ApiService.syncEmployees(employeesData);
+      },
+
+      openBehaviorModal: (employeeId) => {
+        const employee = this.state.getEmployee(employeeId);
+        const aggregatedAnalyses = this.state.getAggregatedAnalyses(employeeId);
+        
+        if (employee && aggregatedAnalyses.length > 0) {
+          let behaviorData = {
+            employeeName: employee.name,
+            totalIncorrectBehavior: 0,
+            totalSwearing: 0,
+            problemPhrases: [],
+            analysisHistory: []
+          };
+          
+          aggregatedAnalyses.forEach((agg, index) => {
+            behaviorData.totalIncorrectBehavior += agg.incorrect_behavior_count || 0;
+            behaviorData.totalSwearing += agg.swearing_count || 0;
+            
+            if (agg.problem_phrases && Array.isArray(agg.problem_phrases)) {
+              behaviorData.problemPhrases.push(...agg.problem_phrases);
+            }
+            
+            behaviorData.analysisHistory.push({
+              date: agg.formatted_date,
+              time: agg.formatted_time,
+              incorrect_behavior_count: agg.incorrect_behavior_count || 0,
+              swearing_count: agg.swearing_count || 0,
+              overall_tone: agg.overall_tone || 'нейтральный'
+            });
+          });
+          
+          const modalContent = document.getElementById('behaviorModalContent');
+          modalContent.innerHTML = `
+            <div class="behavior-analysis" style="max-height: 70vh; overflow-y: auto; padding-right: 8px;">
+              <h4>Сотрудник: ${behaviorData.employeeName}</h4>
+              
+              <div class="behavior-summary">
+                <h5><i class="fas fa-chart-pie"></i> Общая статистика</h5>
+                <div class="behavior-stats-grid">
+                  <div class="behavior-stat" style="background: var(--gray-50); padding: 12px; border-radius: var(--radius-md);">
+                    <div class="behavior-stat-value" style="font-size: 24px; color: #FF4757;">${behaviorData.totalIncorrectBehavior}</div>
+                    <div class="behavior-stat-label">Некорректное поведение</div>
+                  </div>
+                  <div class="behavior-stat" style="background: var(--gray-50); padding: 12px; border-radius: var(--radius-md);">
+                    <div class="behavior-stat-value" style="font-size: 24px; color: #FF9F43;">${behaviorData.totalSwearing}</div>
+                    <div class="behavior-stat-label">Ругательства</div>
+                  </div>
+                </div>
+              </div>
+              
+              ${behaviorData.problemPhrases.length > 0 ? `
+                <div class="problem-phrases" style="margin-top: 20px;">
+                  <h5><i class="fas fa-comment-exclamation"></i> Проблемные фразы (${behaviorData.problemPhrases.length})</h5>
+                  <div style="background: var(--gray-50); padding: 12px; border-radius: var(--radius-md); max-height: 200px; overflow-y: auto;">
+                    ${behaviorData.problemPhrases.map((phrase, i) => `
+                      <div style="padding: 8px; border-bottom: 1px solid var(--gray-200);">
+                        ${i + 1}. "${phrase}"
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+              
+              <div class="behavior-history" style="margin-top: 20px;">
+                <h5><i class="fas fa-history"></i> История по анализам</h5>
+                <div style="background: var(--gray-50); padding: 12px; border-radius: var(--radius-md); max-height: 300px; overflow-y: auto;">
+                  ${behaviorData.analysisHistory.map((item, i) => `
+                    <div style="padding: 12px; border-bottom: 1px solid var(--gray-200);">
+                      <strong>${item.date} (${item.time})</strong><br>
+                      Некорректное поведение: ${item.incorrect_behavior_count}<br>
+                      Ругательства: ${item.swearing_count}<br>
+                      Общий тон: ${item.overall_tone}
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `;
+          
+          UIModal.open('behaviorModal');
+        }
+      },
+
+      openToneModal: (employeeId) => {
+        const employee = this.state.getEmployee(employeeId);
+        const aggregatedAnalyses = this.state.getAggregatedAnalyses(employeeId);
+        
+        if (employee && aggregatedAnalyses.length > 0) {
+          let toneData = {
+            employeeName: employee.name,
+            totalDialogs: 0,
+            totalDialogsWithTone: 0,
+            toneDistribution: {
+              professional: 0,
+              neutral: 0,
+              negative: 0,
+              aggressive: 0
+            },
+            allRecommendations: [],
+            analysisHistory: []
+          };
+          
+          aggregatedAnalyses.forEach((agg, index) => {
+            toneData.totalDialogs += agg.total_dialogs || 0;
+            
+            if (agg.tone_distribution) {
+              // Суммируем распределение тональности
+              toneData.toneDistribution.professional += agg.tone_distribution.professional || 0;
+              toneData.toneDistribution.neutral += agg.tone_distribution.neutral || 0;
+              toneData.toneDistribution.negative += agg.tone_distribution.negative || 0;
+              toneData.toneDistribution.aggressive += agg.tone_distribution.aggressive || 0;
+              
+              // Считаем общее количество диалогов с определенной тональностью
+              toneData.totalDialogsWithTone += (
+                (agg.tone_distribution.professional || 0) +
+                (agg.tone_distribution.neutral || 0) +
+                (agg.tone_distribution.negative || 0) +
+                (agg.tone_distribution.aggressive || 0)
+              );
+            }
+            
+            if (agg.tone_recommendations && agg.tone_recommendations.trim()) {
+              toneData.allRecommendations.push({
+                date: agg.formatted_date,
+                recommendation: agg.tone_recommendations
+              });
+            }
+            
+            toneData.analysisHistory.push({
+              date: agg.formatted_date,
+              time: agg.formatted_time,
+              overall_tone: agg.overall_tone || 'нейтральный',
+              tone_distribution: agg.tone_distribution || {},
+              dialogs_count: agg.total_dialogs,
+              tone_recommendations: agg.tone_recommendations || '',
+              all_tone_suggestions: agg.all_tone_suggestions || []
+            });
+          });
+          
+          // Находим преобладающий тон
+          const maxTone = Object.entries(toneData.toneDistribution)
+            .reduce((max, current) => current[1] > max[1] ? current : max, ['neutral', 0]);
+          
+          // Используем totalDialogsWithTone для расчета процентов
+          const dialogsForPercentage = toneData.totalDialogsWithTone > 0 ? 
+            toneData.totalDialogsWithTone : toneData.totalDialogs;
+          
+          const modalContent = document.getElementById('toneModalContent');
+          modalContent.innerHTML = `
+            <div class="tone-analysis" style="max-height: 70vh; overflow-y: auto; padding-right: 8px;">
+              <h4 style="margin-bottom: 8px;">${toneData.employeeName}</h4>
+              <p style="color: var(--gray-600); margin-bottom: 20px;">
+                Всего проанализировано диалогов: ${toneData.totalDialogs}
+                ${toneData.totalDialogsWithTone > 0 ? `<br><small style="font-size: 12px;">С определенной тональностью: ${toneData.totalDialogsWithTone}</small>` : ''}
+              </p>
+              
+              <div class="tone-summary">
+                <h5><i class="fas fa-chart-pie"></i> Распределение тональности</h5>
+                <div class="behavior-stats-grid" style="margin: 16px 0;">
+                  <div class="behavior-stat" style="background: #E3F2FD; padding: 16px; border-radius: var(--radius-md); text-align: center;">
+                    <div class="behavior-stat-value" style="font-size: 28px; color: #1976D2; font-weight: 700;">${toneData.toneDistribution.professional || 0}</div>
+                    <div class="behavior-stat-label">Профессиональный</div>
+                  </div>
+                  <div class="behavior-stat" style="background: #F5F5F5; padding: 16px; border-radius: var(--radius-md); text-align: center;">
+                    <div class="behavior-stat-value" style="font-size: 28px; color: #616161; font-weight: 700;">${toneData.toneDistribution.neutral || 0}</div>
+                    <div class="behavior-stat-label">Нейтральный</div>
+                  </div>
+                  <div class="behavior-stat" style="background: #FFF3E0; padding: 16px; border-radius: var(--radius-md); text-align: center;">
+                    <div class="behavior-stat-value" style="font-size: 28px; color: #F57C00; font-weight: 700;">${toneData.toneDistribution.negative || 0}</div>
+                    <div class="behavior-stat-label">Негативный</div>
+                  </div>
+                  <div class="behavior-stat" style="background: #FFEBEE; padding: 16px; border-radius: var(--radius-md); text-align: center;">
+                    <div class="behavior-stat-value" style="font-size: 28px; color: #D32F2F; font-weight: 700;">${toneData.toneDistribution.aggressive || 0}</div>
+                    <div class="behavior-stat-label">Агрессивный</div>
+                  </div>
+                </div>
+                
+                <div style="text-align: center; padding: 16px; background: var(--gray-50); border-radius: var(--radius-md); margin-top: 16px; border-left: 4px solid var(--primary);">
+                  <strong>Преобладающий тон: </strong>
+                  <span style="color: ${maxTone[0] === 'professional' ? '#1976D2' : 
+                                   maxTone[0] === 'neutral' ? '#616161' : 
+                                   maxTone[0] === 'negative' ? '#F57C00' : '#D32F2F'}; 
+                                   font-weight: 700; margin-left: 8px;">
+                    ${maxTone[0] === 'professional' ? 'Профессиональный' :
+                      maxTone[0] === 'neutral' ? 'Нейтральный' :
+                      maxTone[0] === 'negative' ? 'Негативный' : 'Агрессивный'}
+                  </span>
+                  <div style="font-size: 14px; color: var(--gray-600); margin-top: 4px;">
+                    Встречается в ${maxTone[1]} из ${dialogsForPercentage} диалогов 
+                    (${dialogsForPercentage > 0 ? Math.round((maxTone[1] / dialogsForPercentage) * 100) : 0}%)
+                  </div>
+                </div>
+              </div>
+              
+              <div class="tone-history" style="margin-top: 24px;">
+                <h5><i class="fas fa-history"></i> История по анализам</h5>
+                <div style="background: var(--gray-50); padding: 12px; border-radius: var(--radius-md); max-height: 300px; overflow-y: auto; margin-top: 12px;">
+                  ${toneData.analysisHistory.map((item, i) => {
+                    const itemTones = item.tone_distribution;
+                    
+                    // Вычисляем общее количество диалогов с тональностью в этом анализе
+                    const itemTotalDialogsWithTone = (
+                      (itemTones.professional || 0) +
+                      (itemTones.neutral || 0) +
+                      (itemTones.negative || 0) +
+                      (itemTones.aggressive || 0)
+                    );
+                    
+                    // Находим преобладающий тон для этого анализа
+                    const itemMaxTone = Object.entries(itemTones)
+                      .reduce((max, current) => current[1] > max[1] ? current : max, ['neutral', 0]);
+                    
+                    return `
+                      <div style="padding: 16px; border-bottom: 1px solid var(--gray-200); ${i === 0 ? 'border-top: none;' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                          <div style="flex: 1;">
+                            <strong>${item.date}</strong>
+                            <div style="font-size: 13px; color: var(--gray-600);">
+                              ${item.time} • ${item.dialogs_count} диалогов
+                              ${itemTotalDialogsWithTone > 0 ? 
+                                `(${itemTotalDialogsWithTone} с тональностью)` : ''}
+                            </div>
+                            ${item.tone_recommendations ? `
+                              <div style="margin-top: 8px; padding: 8px; background: #E8F5E9; border-radius: 4px; border-left: 3px solid #4CAF50;">
+                                <div style="font-weight: 600; color: #2E7D32;">Рекомендация:</div>
+                                <div style="font-size: 13px;">${item.tone_recommendations}</div>
+                              </div>
+                            ` : ''}
+                          </div>
+                          <div style="text-align: right; margin-left: 16px;">
+                            <div style="font-weight: 600; color: ${itemMaxTone[0] === 'professional' ? '#1976D2' : 
+                                                                 itemMaxTone[0] === 'neutral' ? '#616161' : 
+                                                                 itemMaxTone[0] === 'negative' ? '#F57C00' : '#D32F2F'}">
+                              ${item.overall_tone === 'professional' ? 'Профессиональный' :
+                                item.overall_tone === 'neutral' ? 'Нейтральный' :
+                                item.overall_tone === 'negative' ? 'Негативный' : 
+                                item.overall_tone === 'aggressive' ? 'Агрессивный' : item.overall_tone}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        ${itemTotalDialogsWithTone > 0 ? `
+                          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px;">
+                            <div style="text-align: center; padding: 6px; background: #E3F2FD; border-radius: 4px;">
+                              <div style="font-weight: 700;">${itemTones.professional || 0}</div>
+                              <div style="font-size: 11px; color: #1976D2;">Проф.</div>
+                            </div>
+                            <div style="text-align: center; padding: 6px; background: #F5F5F5; border-radius: 4px;">
+                              <div style="font-weight: 700;">${itemTones.neutral || 0}</div>
+                              <div style="font-size: 11px; color: #616161;">Нейтр.</div>
+                            </div>
+                            <div style="text-align: center; padding: 6px; background: #FFF3E0; border-radius: 4px;">
+                              <div style="font-weight: 700;">${itemTones.negative || 0}</div>
+                              <div style="font-size: 11px; color: #F57C00;">Негат.</div>
+                            </div>
+                            <div style="text-align: center; padding: 6px; background: #FFEBEE; border-radius: 4px;">
+                              <div style="font-weight: 700;">${itemTones.aggressive || 0}</div>
+                              <div style="font-size: 11px; color: #D32F2F;">Агрес.</div>
+                            </div>
+                          </div>
+                        ` : `
+                          <div style="margin-top: 12px; padding: 8px; background: #FFF9E6; border-radius: 4px; text-align: center;">
+                            <div style="font-size: 13px; color: #E65100;">Распределение тональности не определено</div>
+                          </div>
+                        `}
+                        
+                        ${item.all_tone_suggestions && item.all_tone_suggestions.length > 0 ? `
+                          <div style="margin-top: 12px; font-size: 13px; color: var(--gray-700);">
+                            <div style="font-weight: 600; margin-bottom: 4px; color: var(--primary);">Конкретные рекомендации по диалогам:</div>
+                            ${item.all_tone_suggestions.map(suggestion => 
+                              `<div style="padding: 4px 0; border-left: 2px solid var(--primary-light); margin-left: 8px; padding-left: 8px;">• ${suggestion}</div>`
+                            ).join('')}
+                          </div>
+                        ` : ''}
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+              
+              ${toneData.allRecommendations.length > 0 ? `
+                <div class="tone-insights" style="margin-top: 24px; padding: 16px; background: var(--gray-50); border-radius: var(--radius-md); border-left: 4px solid var(--accent);">
+                  <h5><i class="fas fa-lightbulb"></i> Все рекомендации по тону общения</h5>
+                  <div style="margin-top: 8px; font-size: 14px; line-height: 1.5; max-height: 200px; overflow-y: auto;">
+                    ${toneData.allRecommendations.map((rec, idx) => `
+                      <div style="margin-bottom: 12px; padding-bottom: 12px; ${idx < toneData.allRecommendations.length - 1 ? 'border-bottom: 1px solid var(--gray-300);' : ''}">
+                        <div style="font-weight: 600; color: var(--primary); margin-bottom: 4px;">
+                          ${rec.date}
+                        </div>
+                        <div>${rec.recommendation}</div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          `;
+          
+          UIModal.open('toneModal');
+        }
       }
     };
   }
 }
 
-// Фикс всех крестиков модалок
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('close-btn')) {
-    const modal = e.target.closest('.modal');
-    if (modal) {
-      modal.style.display = 'none';
-    }
-  }
-});  
 // ============================================================================
 // ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // ============================================================================
@@ -2117,14 +2771,18 @@ let app;
 
 document.addEventListener('DOMContentLoaded', () => {
   app = new App();
-  window.app = app; // Делаем доступным глобально для обработчиков событий
+  window.app = app;
+});
+
+// Закрытие модалок по клику на крестик
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('close-btn')) {
+    const modal = e.target.closest('.modal');
+    if (modal && (modal.id === 'addEmployeeModal' || modal.id === 'analysisModal' || modal.id === 'behaviorModal' || modal.id === 'toneModal')) {
+      modal.style.display = 'none';
+    }
+  }
 });
 </script>
 </body>
 </html>
-
-
-
-
-
-
