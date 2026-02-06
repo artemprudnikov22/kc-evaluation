@@ -17,14 +17,12 @@
 // ============================================================================
 const CONFIG = {
   N8N_BASE_URL: 'https://n8n.decartus.team',
-  UPLOAD_DIALOGS_URL: 'https://n8n.decartus.team/webhook/upload-dialogs',
-  SYNC_EMPLOYEES_URL: 'https://n8n.decartus.team/webhook/sync-employees',
   GET_EMPLOYEES_URL: 'https://n8n.decartus.team/webhook/get-employees',
   GET_ANALYSIS_URL: 'https://n8n.decartus.team/webhook/get-analyzed-dialogs',
+  SYNC_EMPLOYEES_URL: 'https://n8n.decartus.team/webhook/sync-employees',
   AGGREGATION_TIME_WINDOW: 5 * 60 * 1000, // 5 минут
-  MAX_FILE_SIZE_MB: 50,
-  WARN_FILE_SIZE_MB: 10,
-  SUPPORTED_FORMATS: '.txt,.json,.csv,.xlsx,.xls,.xml,.docx,.doc,.pdf'
+  ERP_SYNC_ENABLED: true,
+  ERP_WEBHOOK_URL: 'https://n8n.decartus.team/webhook/evgenii'
 };
 
 // ============================================================================
@@ -210,29 +208,21 @@ body {
   font-size: 24px;
 }
 
-.add-employee-btn {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-  color: var(--dark);
-  border: none;
-  padding: 12px 24px;
+.erp-sync-badge {
+  background: linear-gradient(135deg, #4CAF50 0%, #81C784 100%);
+  color: white;
+  padding: 12px 20px;
   border-radius: var(--radius-md);
   font-size: 15px;
   font-weight: 600;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  transition: all var(--transition-base);
+  gap: 10px;
   box-shadow: var(--shadow-sm);
 }
 
-.add-employee-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.add-employee-btn:active {
-  transform: translateY(0);
+.erp-sync-badge i {
+  font-size: 18px;
 }
 
 .security-note {
@@ -326,19 +316,13 @@ body {
   gap: 6px;
 }
 
-.upload-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.upload-button {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
-  color: var(--light);
+.add-employee-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+  color: var(--dark);
   border: none;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border-radius: var(--radius-md);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
@@ -348,23 +332,44 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.upload-button:hover {
+.add-employee-btn:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-.upload-button:active {
+.add-employee-btn:active {
   transform: translateY(0);
 }
 
-.file-input {
-  display: none;
+.sync-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 200px;
 }
 
-.file-types {
+.sync-badge {
+  background: linear-gradient(135deg, #2196F3 0%, #64B5F6 100%);
+  color: white;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.sync-badge i {
+  font-size: 16px;
+}
+
+.sync-info {
   font-size: 12px;
-  color: var(--gray-500);
-  text-align: right;
+  color: var(--gray-600);
+  text-align: center;
+  line-height: 1.4;
 }
 
 .employee-stats {
@@ -1059,8 +1064,9 @@ body {
     align-items: stretch;
   }
   
-  .upload-section {
-    align-items: stretch;
+  .sync-status {
+    min-width: 100%;
+    align-items: center;
   }
   
   .modal-content {
@@ -1145,6 +1151,79 @@ body {
   font-size: 14px;
   font-weight: 700;
 }
+
+/* Стили для ERP интеграции */
+.erp-integration-panel {
+  background: var(--light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+}
+
+.erp-integration-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.erp-integration-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.erp-integration-info {
+  font-size: 14px;
+  color: var(--gray-600);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.erp-integration-info code {
+  display: block;
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  font-family: monospace;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.erp-integration-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.erp-stat-card {
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  border: 1px solid var(--gray-200);
+  text-align: center;
+}
+
+.erp-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.erp-stat-label {
+  font-size: 12px;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 `;
 
 // ============================================================================
@@ -1156,6 +1235,10 @@ class AppState {
     this.analysisData = {};
     this.aggregatedAnalysisData = {};
     this.nextEmployeeId = 106;
+    this.erpSyncStatus = {
+      enabled: CONFIG.ERP_SYNC_ENABLED,
+      webhookUrl: CONFIG.ERP_WEBHOOK_URL
+    };
   }
 
   getEmployee(id) {
@@ -1196,6 +1279,10 @@ class AppState {
     employee.id = this.nextEmployeeId++;
     employee.expanded = false;
     this.employees.push(employee);
+  }
+
+  setErpSyncStatus(status) {
+    this.erpSyncStatus = { ...this.erpSyncStatus, ...status };
   }
 }
 
@@ -1240,18 +1327,11 @@ class ApiService {
     }
   }
 
-  static async uploadFile(formData) {
-    try {
-      const response = await fetch(CONFIG.UPLOAD_DIALOGS_URL, {
-        method: 'POST',
-        body: formData
-      });
-      if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
-      return await response.json();
-    } catch (error) {
-      console.error('Ошибка загрузки файла:', error);
-      throw error;
-    }
+  static async getErpSyncStatus() {
+    return {
+      status: 'active',
+      webhookUrl: CONFIG.ERP_WEBHOOK_URL
+    };
   }
 }
 
@@ -1268,6 +1348,7 @@ class Utils {
   }
 
   static formatDate(dateString) {
+    if (!dateString) return 'Не указано';
     const date = new Date(dateString);
     return date.toLocaleDateString('ru-RU', {
       day: 'numeric',
@@ -1276,32 +1357,38 @@ class Utils {
     });
   }
 
-static markdownToHtml(text) {
-  if (!text) return '';
-  
-  let html = text;
-  
-  // Преобразуем **жирный текст** в <strong>жирный текст</strong>
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  
-  // Преобразуем __подчеркнутый текст__ в <u>подчеркнутый текст</u>
-  html = html.replace(/__(.*?)__/g, '<u>$1</u>');
-  
-  // Преобразуем переводы строк в <br>
-  html = html.replace(/\n/g, '<br>');
-  
-  // Преобразуем "**Диалог_X**" в отдельный блок с особым стилем
-  html = html.replace(/(<strong>Диалог_\d+<\/strong>):/g, '<div style="margin-top: 16px; margin-bottom: 8px;"><strong>$1</strong>:</div>');
-  
-  return html;
-}
+  static formatDateTime(dateString) {
+    if (!dateString) return 'Не указано';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
 
   static formatTime(dateString) {
+    if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleTimeString('ru-RU', {
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  static markdownToHtml(text) {
+    if (!text) return '';
+    
+    let html = text;
+    
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.*?)__/g, '<u>$1</u>');
+    html = html.replace(/\n/g, '<br>');
+    html = html.replace(/(<strong>Диалог_\d+<\/strong>):/g, '<div style="margin-top: 16px; margin-bottom: 8px;"><strong>$1</strong>:</div>');
+    
+    return html;
   }
 
   static groupAnalysesByTimeWindow(analyses, timeWindow = CONFIG.AGGREGATION_TIME_WINDOW) {
@@ -1384,8 +1471,8 @@ static markdownToHtml(text) {
           totalLevel2 += parseInt(batch.level2_count) || 0;
           totalLevel3 += parseInt(batch.level3_count) || 0;
           totalLevel4 += parseInt(batch.level4_count) || 0;
-          totalIncorrectBehavior += parseInt(batch.incorrect_behavior_count) || parseInt(batch.parsed_incorrect_behavior) || 0;
-totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearing) || 0;
+          totalIncorrectBehavior += parseInt(batch.incorrect_behavior_count) || 0;
+          totalSwearing += parseInt(batch.swearing_count) || 0;
           
           if (batch.problem_phrases) {
             try {
@@ -1400,10 +1487,6 @@ totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearin
             }
           }
           
-          // ИЗВЛЕЧЕНИЕ РАСПРЕДЕЛЕНИЯ ТОНАЛЬНОСТИ
-          let batchHasDistribution = false;
-          
-          // 1. Пробуем получить распределение из behavior_analysis_json (приоритетный источник)
           if (batch.behavior_analysis_json && batch.behavior_analysis_json !== '{}') {
             try {
               const behaviorAnalysis = JSON.parse(batch.behavior_analysis_json);
@@ -1413,7 +1496,6 @@ totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearin
                 toneDistribution.neutral += dist.neutral || 0;
                 toneDistribution.negative += dist.negative || 0;
                 toneDistribution.aggressive += dist.aggressive || 0;
-                batchHasDistribution = true;
               }
               
               if (behaviorAnalysis.summary && behaviorAnalysis.summary.tone_recommendations) {
@@ -1429,42 +1511,18 @@ totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearin
               }
             } catch (e) {
               console.error('Ошибка парсинга behavior_analysis_json:', e.message);
-              batchHasDistribution = false;
             }
           }
           
-          // 2. Если нет распределения из JSON, используем overall_tone
-          if (!batchHasDistribution && batch.overall_tone) {
-            const tone = batch.overall_tone.toLowerCase().trim();
-            const dialogsInBatch = dialogsCount > 0 ? dialogsCount : 1;
-            
-            if (tone.includes('профессиональный') || tone.includes('professional')) {
-              toneDistribution.professional += dialogsInBatch;
-            } else if (tone.includes('нейтральный') || tone.includes('neutral')) {
-              toneDistribution.neutral += dialogsInBatch;
-            } else if (tone.includes('негативный') || tone.includes('negative')) {
-              toneDistribution.negative += dialogsInBatch;
-            } else if (tone.includes('агрессивный') || tone.includes('aggressive')) {
-              toneDistribution.aggressive += dialogsInBatch;
-            }
-          }
-          
-          // 3. Рекомендации из корневого поля (если еще нет)
           if (batch.tone_recommendations && batch.tone_recommendations.trim() && !toneRecommendations) {
             toneRecommendations = batch.tone_recommendations;
           }
           
-          // 4. Конкретные рекомендации по диалогам из tone_distribution_json
           if (batch.tone_distribution_json && batch.tone_distribution_json.trim()) {
-            // Проверяем, нет ли уже таких рекомендаций
-            const suggestionExists = allToneSuggestions.some(s => s.includes(batch.tone_distribution_json));
-            if (!suggestionExists) {
-              allToneSuggestions.push(batch.tone_distribution_json);
-            }
+            allToneSuggestions.push(batch.tone_distribution_json);
           }
         });
         
-        // Определяем преобладающий тон на основе распределения
         const tones = Object.entries(toneDistribution);
         let maxCount = 0;
         tones.forEach(([tone, count]) => {
@@ -1474,7 +1532,6 @@ totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearin
           }
         });
         
-        // Если все тона равны 0, устанавливаем нейтральный
         if (maxCount === 0) {
           overallTone = 'нейтральный';
         }
@@ -1501,7 +1558,6 @@ totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearin
           batch_count: group.length,
           avg_complexity: avgComplexity,
           avg_ier: avgIER,
-          total_ier: group.reduce((sum, a) => sum + (parseFloat(a.ier_coefficient) || 0), 0),
           dialog_ids: dialogIds,
           
           level_counts: {
@@ -1565,35 +1621,6 @@ totalSwearing += parseInt(batch.swearing_count) || parseInt(batch.parsed_swearin
     return (sum / validIERs.length).toFixed(2);
   }
 
-  static calculateComplexityDistribution(analyses) {
-    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0 };
-    
-    if (!analyses || analyses.length === 0) return distribution;
-    
-    analyses.forEach(analysis => {
-      if (analysis.complexity_level) {
-        const complexity = parseFloat(analysis.complexity_level);
-        if (complexity >= 1 && complexity <= 4) {
-          const dialogsCount = parseInt(analysis.dialogs_count) || 0;
-          if (Number.isInteger(complexity)) {
-            distribution[complexity] += dialogsCount;
-          } else {
-            const floor = Math.floor(complexity);
-            const ceil = Math.ceil(complexity);
-            const ratio = complexity - floor;
-            
-            distribution[floor] += Math.round(dialogsCount * (1 - ratio));
-            if (ceil <= 4) {
-              distribution[ceil] += Math.round(dialogsCount * ratio);
-            }
-          }
-        }
-      }
-    });
-    
-    return distribution;
-  }
-
   static getToneLabel(tone) {
     const toneMap = {
       professional: 'Профессиональный',
@@ -1642,16 +1669,9 @@ class UILoader {
   static hide() {
     const loader = document.getElementById('loader');
     const backdrop = document.getElementById('loaderBackdrop');
-    const progress = document.getElementById('loaderProgress');
     
     if (loader) loader.style.display = 'none';
     if (backdrop) backdrop.style.display = 'none';
-    if (progress) progress.style.width = '0%';
-  }
-
-  static updateProgress(percent) {
-    const progress = document.getElementById('loaderProgress');
-    if (progress) progress.style.width = `${percent}%`;
   }
 }
 
@@ -1712,42 +1732,52 @@ class HeaderComponent {
   }
 }
 
+class ErpIntegrationComponent {
+  static render() {
+    if (!CONFIG.ERP_SYNC_ENABLED) return '';
+    
+    return `
+      <div class="erp-integration-panel">
+        <div class="erp-integration-header">
+          <div class="erp-integration-title">
+            <i class="fas fa-sync-alt"></i>
+            <span>Автоматическая синхронизация данных</span>
+          </div>
+          <div class="erp-sync-badge">
+            <i class="fas fa-check-circle"></i>
+            <span>Активна</span>
+          </div>
+        </div>
+        
+        <div class="erp-integration-info">
+          <p>Данные диалогов автоматически поступают из корпоративной системы. Справочник сотрудников управляется вручную через интерфейс ниже.</p>
+        </div>
+        
+        <div class="erp-integration-stats">
+          <div class="erp-stat-card">
+            <div class="erp-stat-value">Автоматически</div>
+            <div class="erp-stat-label">Обновление диалогов</div>
+          </div>
+          <div class="erp-stat-card">
+            <div class="erp-stat-value">Вручную</div>
+            <div class="erp-stat-label">Управление сотрудниками</div>
+          </div>
+          <div class="erp-stat-card">
+            <div class="erp-stat-value">Раз в 4 дня</div>
+            <div class="erp-stat-label">Периодичность</div>
+          </div>
+          <div class="erp-stat-card">
+            <div class="erp-stat-value">Активна</div>
+            <div class="erp-stat-label">Статус интеграции</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+}
+
 class EmployeeCardComponent {
   static render(employee, aggregatedAnalyses, app) {
-    let overallTone = 'нейтральный';
-    const toneCounts = {
-      professional: 0,
-      neutral: 0,
-      negative: 0,
-      aggressive: 0
-    };
-    
-    let allToneRecommendations = [];
-    
-    aggregatedAnalyses.forEach(agg => {
-      if (agg.tone_distribution) {
-        toneCounts.professional += agg.tone_distribution.professional || 0;
-        toneCounts.neutral += agg.tone_distribution.neutral || 0;
-        toneCounts.negative += agg.tone_distribution.negative || 0;
-        toneCounts.aggressive += agg.tone_distribution.aggressive || 0;
-      }
-      
-      if (agg.tone_recommendations) {
-        allToneRecommendations.push({
-          date: agg.formatted_date,
-          recommendation: agg.tone_recommendations
-        });
-      }
-    });
-    
-    let maxCount = 0;
-    Object.entries(toneCounts).forEach(([tone, count]) => {
-      if (count > maxCount) {
-        maxCount = count;
-        overallTone = tone;
-      }
-    });
-    
     const avgIER = Utils.calculateAverageIER(aggregatedAnalyses);
     const lastIER = aggregatedAnalyses.length > 0 ? aggregatedAnalyses[aggregatedAnalyses.length - 1].avg_ier : '—';
     const lastDate = aggregatedAnalyses.length > 0 ? aggregatedAnalyses[aggregatedAnalyses.length - 1].formatted_date : '—';
@@ -1759,6 +1789,31 @@ class EmployeeCardComponent {
     const totalLevel4 = aggregatedAnalyses.reduce((sum, a) => sum + (a.total_level4 || 0), 0);
     const totalIncorrectBehavior = aggregatedAnalyses.reduce((sum, a) => sum + (a.incorrect_behavior_count || 0), 0);
     const totalSwearing = aggregatedAnalyses.reduce((sum, a) => sum + (a.swearing_count || 0), 0);
+    
+    let overallTone = 'нейтральный';
+    const toneCounts = {
+      professional: 0,
+      neutral: 0,
+      negative: 0,
+      aggressive: 0
+    };
+    
+    aggregatedAnalyses.forEach(agg => {
+      if (agg.tone_distribution) {
+        toneCounts.professional += agg.tone_distribution.professional || 0;
+        toneCounts.neutral += agg.tone_distribution.neutral || 0;
+        toneCounts.negative += agg.tone_distribution.negative || 0;
+        toneCounts.aggressive += agg.tone_distribution.aggressive || 0;
+      }
+    });
+    
+    let maxCount = 0;
+    Object.entries(toneCounts).forEach(([tone, count]) => {
+      if (count > maxCount) {
+        maxCount = count;
+        overallTone = tone;
+      }
+    });
     
     return `
       <div class="employee-card" data-employee-id="${employee.id}">
@@ -1773,15 +1828,16 @@ class EmployeeCardComponent {
             </div>
           </div>
           
-          <div class="upload-section">
-            <label class="upload-button">
-              <i class="fas fa-upload"></i>
-              Загрузить диалоги
-              <input type="file" class="file-input" 
-                     accept="${CONFIG.SUPPORTED_FORMATS}" 
-                     onchange="app.handlers.handleUpload(event, ${employee.id})">
-            </label>
-            <div class="file-types">TXT, JSON, CSV, Excel, Word, PDF</div>
+          <div class="sync-status">
+            <div class="sync-badge">
+              <i class="fas fa-database"></i>
+              <span>Данные из ERP</span>
+            </div>
+            <div class="sync-info">
+              ${aggregatedAnalyses.length > 0 ? 
+                `Анализов: ${aggregatedAnalyses.length}` : 
+                'Ожидание данных из ERP'}
+            </div>
           </div>
         </div>
         
@@ -1883,11 +1939,6 @@ class EmployeeCardComponent {
               Проф: ${toneCounts.professional}, Нейтр: ${toneCounts.neutral}<br>
               Негат: ${toneCounts.negative}, Агресс: ${toneCounts.aggressive}
             </div>
-            ${allToneRecommendations.length > 0 ? `
-              <div style="font-size: 11px; color: var(--primary); margin-top: 4px;">
-                <i class="fas fa-lightbulb"></i> Есть рекомендации
-              </div>
-            ` : ''}
             <button class="details-toggle" style="margin-top: 8px; font-size: 12px; padding: 6px 12px;" onclick="app.handlers.openToneModal(${employee.id})">
               <i class="fas fa-chart-bar"></i> Подробный анализ
             </button>
@@ -1955,7 +2006,8 @@ class EmployeeCardComponent {
     return `
       <div class="no-data">
         <i class="fas fa-chart-line"></i>
-        <p>Анализы отсутствуют. Загрузите диалоги для начала анализа.</p>
+        <p>Анализы отсутствуют. Данные автоматически поступают из ERP системы.</p>
+        <p style="font-size: 12px; margin-top: 8px;">Следующее обновление: по расписанию ERP системы</p>
       </div>
     `;
   }
@@ -2121,7 +2173,7 @@ class AnalysisModalComponent {
             ` : ''}
             
             <h4><i class="fas fa-comment-alt"></i> Обоснование</h4>
-<div class="batch-justification">${Utils.markdownToHtml(batch.justification) || 'Обоснование отсутствует'}</div>
+            <div class="batch-justification">${Utils.markdownToHtml(batch.justification) || 'Обоснование отсутствует'}</div>
           </div>
         </div>
       </div>
@@ -2144,6 +2196,8 @@ class App {
     this.renderApp();
     await this.loadData();
     this.updateUI();
+    
+    setInterval(() => this.loadData(), 5 * 60 * 1000);
   }
 
   addStyles() {
@@ -2158,6 +2212,8 @@ class App {
       <div class="container">
         <div id="header"></div>
         
+        ${CONFIG.ERP_SYNC_ENABLED ? '<div id="erpIntegration"></div>' : ''}
+        
         <main class="main-content">
           <div class="employee-cards-container">
             <div class="section-header">
@@ -2165,14 +2221,20 @@ class App {
                 <i class="fas fa-users-cog"></i>
                 <span>Отдел колл-центра</span>
               </div>
-              <button class="add-employee-btn" onclick="app.handlers.openAddEmployeeModal()">
-                <i class="fas fa-user-plus"></i>
-                Добавить сотрудника
-              </button>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                ${CONFIG.ERP_SYNC_ENABLED ? 
+                  '<div class="erp-sync-badge" style="padding: 10px 16px; font-size: 14px;"><i class="fas fa-sync-alt"></i><span>Данные из ERP</span></div>' : 
+                  ''
+                }
+                <button class="add-employee-btn" onclick="app.handlers.openAddEmployeeModal()">
+                  <i class="fas fa-user-plus"></i>
+                  Добавить сотрудника
+                </button>
+              </div>
             </div>
             
             <div class="security-note">
-              * В целях сохранности данных, для удаления сотрудника обратитесь к <span>администратору</span>.
+              * Данные диалогов поступают автоматически из ERP системы. Для добавления/редактирования сотрудников используйте форму выше.
             </div>
             
             <div id="content"></div>
@@ -2183,11 +2245,8 @@ class App {
       <div class="loader-backdrop" id="loaderBackdrop"></div>
       <div class="loader" id="loader">
         <div class="spinner"></div>
-        <div class="loader-text" id="loaderText">Загрузка и обработка файла...</div>
+        <div class="loader-text" id="loaderText">Загрузка данных...</div>
         <div class="loader-subtext" id="loaderSubtext"></div>
-        <div class="loader-progress">
-          <div class="loader-progress-bar" id="loaderProgress"></div>
-        </div>
       </div>
       
       <div id="addEmployeeModal" class="modal">
@@ -2212,6 +2271,7 @@ class App {
           </div>
         </div>
       </div>
+      
       <div id="analysisModal" class="modal"></div>
       <div id="behaviorModal" class="modal">
         <div class="modal-content" style="max-width: 800px;">
@@ -2241,9 +2301,16 @@ class App {
   }
 
   async loadData() {
-    UILoader.show('Загрузка данных...', 'Подключение к сервису AI-аналитики');
+    UILoader.show('Загрузка данных...', 'Синхронизация с ERP системой');
     
     try {
+      if (CONFIG.ERP_SYNC_ENABLED) {
+        const erpStatus = await ApiService.getErpSyncStatus();
+        if (erpStatus) {
+          this.state.setErpSyncStatus(erpStatus);
+        }
+      }
+
       const employeesData = await ApiService.loadEmployees();
       if (Array.isArray(employeesData) && employeesData.length > 0) {
         const employees = employeesData.map(row => ({
@@ -2308,6 +2375,7 @@ class App {
 
   updateUI() {
     this.updateStats();
+    this.renderErpIntegration();
     this.renderEmployees();
   }
 
@@ -2327,6 +2395,15 @@ class App {
     const headerContainer = document.getElementById('header');
     if (headerContainer) {
       headerContainer.innerHTML = HeaderComponent.render(totalEmployees, totalAnalyses, totalDialogs);
+    }
+  }
+
+  renderErpIntegration() {
+    if (!CONFIG.ERP_SYNC_ENABLED) return;
+    
+    const erpContainer = document.getElementById('erpIntegration');
+    if (erpContainer) {
+      erpContainer.innerHTML = ErpIntegrationComponent.render();
     }
   }
 
@@ -2354,56 +2431,6 @@ class App {
 
   createHandlers() {
     return {
-      handleUpload: async (event, employeeId) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const employee = this.state.getEmployee(employeeId);
-        const fileSizeMB = (file.size / 1024 / 1024).toFixed(2);
-
-        if (file.size > CONFIG.MAX_FILE_SIZE_MB * 1024 * 1024) {
-          alert(`Файл слишком большой. Максимальный размер: ${CONFIG.MAX_FILE_SIZE_MB} МБ`);
-          event.target.value = '';
-          return;
-        }
-
-        if (file.size > CONFIG.WARN_FILE_SIZE_MB * 1024 * 1024) {
-          const confirmUpload = confirm(
-            `Файл довольно большой (${fileSizeMB} МБ). Обработка может занять несколько минут.\n\nПродолжить загрузку?`
-          );
-          
-          if (!confirmUpload) {
-            event.target.value = '';
-            return;
-          }
-        }
-
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('employeeId', employeeId);
-        formData.append('employeeName', employee.name);
-
-        UILoader.show('Загрузка файла...', `Файл: ${file.name}\nРазмер: ${fileSizeMB} МБ`);
-
-        try {
-          const result = await ApiService.uploadFile(formData);
-          UILoader.hide();
-          
-          alert(`✅ Файл успешно обработан!\n\nСотрудник: ${employee.name}\nДиалогов: ${result.total || result.processed || 'N/A'}`);
-          
-          UILoader.show('Обновление данных...');
-          await this.loadData();
-          this.updateUI();
-          UILoader.hide();
-          
-        } catch (error) {
-          UILoader.hide();
-          alert(`❌ Ошибка при загрузке файла:\n\n${error.message}\n\nПроверьте подключение к интернету и попробуйте снова.`);
-        }
-
-        event.target.value = '';
-      },
-
       editEmployeeName: async (employeeId, currentName) => {
         const employee = this.state.getEmployee(employeeId);
         if (!employee) return;
@@ -2609,13 +2636,11 @@ class App {
             toneData.totalDialogs += agg.total_dialogs || 0;
             
             if (agg.tone_distribution) {
-              // Суммируем распределение тональности
               toneData.toneDistribution.professional += agg.tone_distribution.professional || 0;
               toneData.toneDistribution.neutral += agg.tone_distribution.neutral || 0;
               toneData.toneDistribution.negative += agg.tone_distribution.negative || 0;
               toneData.toneDistribution.aggressive += agg.tone_distribution.aggressive || 0;
               
-              // Считаем общее количество диалогов с определенной тональностью
               toneData.totalDialogsWithTone += (
                 (agg.tone_distribution.professional || 0) +
                 (agg.tone_distribution.neutral || 0) +
@@ -2642,11 +2667,9 @@ class App {
             });
           });
           
-          // Находим преобладающий тон
           const maxTone = Object.entries(toneData.toneDistribution)
             .reduce((max, current) => current[1] > max[1] ? current : max, ['neutral', 0]);
           
-          // Используем totalDialogsWithTone для расчета процентов
           const dialogsForPercentage = toneData.totalDialogsWithTone > 0 ? 
             toneData.totalDialogsWithTone : toneData.totalDialogs;
           
@@ -2703,7 +2726,6 @@ class App {
                   ${toneData.analysisHistory.map((item, i) => {
                     const itemTones = item.tone_distribution;
                     
-                    // Вычисляем общее количество диалогов с тональностью в этом анализе
                     const itemTotalDialogsWithTone = (
                       (itemTones.professional || 0) +
                       (itemTones.neutral || 0) +
@@ -2711,7 +2733,6 @@ class App {
                       (itemTones.aggressive || 0)
                     );
                     
-                    // Находим преобладающий тон для этого анализа
                     const itemMaxTone = Object.entries(itemTones)
                       .reduce((max, current) => current[1] > max[1] ? current : max, ['neutral', 0]);
                     
@@ -2818,7 +2839,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.app = app;
 });
 
-// Закрытие модалок по клику на крестик
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('close-btn')) {
     const modal = e.target.closest('.modal');
