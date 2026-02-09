@@ -1290,9 +1290,19 @@ class AppState {
 // API СЛОЙ
 // ============================================================================
 class ApiService {
+  // Вспомогательный метод для формирования заголовков с авторизацией
+  static getHeaders(extraHeaders = {}) {
+    return {
+      'X-Auth-Token': 'MySuperAISecret2026', // Твой секрет, настроенный в n8n
+      ...extraHeaders
+    };
+  }
+
   static async loadEmployees() {
     try {
-      const response = await fetch(CONFIG.GET_EMPLOYEES_URL);
+      const response = await fetch(CONFIG.GET_EMPLOYEES_URL, {
+        headers: this.getHeaders()
+      });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -1303,7 +1313,9 @@ class ApiService {
 
   static async loadAnalysisData() {
     try {
-      const response = await fetch(CONFIG.GET_ANALYSIS_URL);
+      const response = await fetch(CONFIG.GET_ANALYSIS_URL, {
+        headers: this.getHeaders()
+      });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     } catch (error) {
@@ -1316,7 +1328,7 @@ class ApiService {
     try {
       const response = await fetch(CONFIG.SYNC_EMPLOYEES_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.getHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ employees: employeesData })
       });
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
